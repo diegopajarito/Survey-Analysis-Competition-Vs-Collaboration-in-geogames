@@ -1,0 +1,1 @@
+table_answers = read.csv('/Users/pajarito/Documents/Experiment Data/Questionnaire_Answers_Oct_5.csv')

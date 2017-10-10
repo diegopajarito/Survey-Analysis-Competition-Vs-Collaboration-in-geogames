@@ -1,0 +1,93 @@
+# Description: Graphs for the use of mobile phone section
+#
+# Comments: set your working directory to 
+# Author: Diego Pajarito 
+
+require(likert)
+
+table_answers = read.csv('data/Questionnaire_Answers.csv')
+
+answers_engagement <- table_answers[,75:86]
+
+likert_values <- c(-3,-2,-1,0,1,2,3)
+likert_labels <- c("Strongly disagree"," ","  ","Neutral","   ","    ","Strongly agree")
+likert_factors <- factor(likert_values)
+
+# Engagement with cycling
+eng1_before_factor <- factor(answers_engagement$engagement_A1, likert_factors,labels = likert_labels)
+eng1_after_factor <- factor(answers_engagement$engagement_B1, likert_factors,labels = likert_labels)
+
+eng1_factors <- data.frame(eng1_before_factor, eng1_after_factor)
+
+names(eng1_factors) <- c("With Cycling - Before", "With Cycling - After")
+eng1_likert <- likert(eng1_factors)
+plot(eng1_likert)
+
+# Engagement with mobile apps
+eng2_before_factor <- factor(answers_engagement$engagement_A2, likert_factors,labels = likert_labels)
+eng2_after_factor <- factor(answers_engagement$engagement_B2, likert_factors,labels = likert_labels)
+
+eng2_factors <- data.frame(eng2_before_factor, eng2_after_factor)
+
+names(eng2_factors) <- c("With Mobile Games - Before", "With Mobile Games - After")
+eng2_likert <- likert(eng2_factors)
+plot(eng2_likert)
+
+
+# Engagement with app for cycling
+eng3_before_factor <- factor(answers_engagement$engagement_A3, likert_factors,labels = likert_labels)
+eng3_after_factor <- factor(answers_engagement$engagement_B3, likert_factors,labels = likert_labels)
+
+eng3_factors <- data.frame(eng3_before_factor, eng3_after_factor)
+
+names(eng3_factors) <- c("With Aps for Cycling - Before", "With Aps for Cycling - After")
+eng3_likert <- likert(eng3_factors)
+plot(eng3_likert)
+
+# Engagement 
+eng_factors <- data.frame(eng1_before_factor,eng1_after_factor, eng2_before_factor, eng2_after_factor, eng3_before_factor, eng3_after_factor)
+names(eng_factors) <- c("With Cycling - Before", "With Cycling - After", "With Mobile Games - Before", "With Mobile Games - After", "With Aps for Cycling - Before", "With Aps for Cycling - After")
+
+eng_likert <- likert(eng_factors)
+plot(eng_likert)
+
+pdf("graphs/engagement.pdf")
+plot(eng_likert)
+dev.off()
+
+
+
+
+# Engagement with future cycling
+eng_future_cycling_factor <- factor(answers_engagement$engagement_cycling_2w, likert_factors,labels = likert_labels)
+eng_future_cycling2_factor <- factor(answers_engagement$engagement_cycling_future, likert_factors,labels = likert_labels)
+eng_future_app_factor <- factor(answers_engagement$engagement_app_2w, likert_factors,labels = likert_labels)
+eng_future_app2_factor <- factor(answers_engagement$engagement_app_future, likert_factors,labels = likert_labels)
+eng_future_any_app_factor <- factor(answers_engagement$engagement_any_app_2w, likert_factors,labels = likert_labels)
+eng_future_any_app2_factor <- factor(answers_engagement$engagement_any_app_future, likert_factors,labels = likert_labels)
+
+
+eng_future_cycling <- data.frame(eng_future_cycling_factor, eng_future_cycling2_factor, eng_future_app_factor, eng_future_app2_factor, eng_future_any_app_factor, eng_future_any_app2_factor)
+
+names(eng_future_cycling) <- c("I intend to bicycle in the next 2 weeks","I intend to use a bicycle in the future", "I intend to use the given app in the next 2 weeks","I intend to use the given app in the future","I intend to use an app while cycling in the next 2 weeks","I intend to use an app while cycling in the future")
+eng_future_cycling_likert <- likert(eng_future_cycling)
+plot(eng_future_cycling_likert)
+
+pdf("graphs/engagement_future.pdf")
+plot(eng_future_cycling_likert)
+dev.off()
+
+
+#Engagement with the experiment
+experim_experiment_factor <- factor(table_answers$engagement_1, likert_factors, labels = likert_labels)
+experim_experiment_app_factor <- factor(table_answers$engagement_2, likert_factors, labels = likert_labels)
+
+eng_experim <- data.frame(experim_experiment_factor, experim_experiment_app_factor)
+names(eng_experim) <- c("cycling during the experiment","using the given app")
+eng_experim_likert <- likert(eng_experim)
+plot(eng_experim_likert)
+
+pdf("graphs/engagement_experiment.pdf")
+plot(eng_experim_likert)
+dev.off()
+

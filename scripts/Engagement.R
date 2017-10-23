@@ -1,6 +1,7 @@
-# Description: Graphs for the use of mobile phone section
+# Description: Graphs for the analysis of engagement with cycling, the experiment application
+# and cycling applications in general
 #
-# Comments: set your working directory to 
+# Comments: set your working directory to the project folder
 # Author: Diego Pajarito 
 
 require(likert)

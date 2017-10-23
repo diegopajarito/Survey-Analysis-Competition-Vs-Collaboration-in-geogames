@@ -33,7 +33,7 @@ eng2_factors <- data.frame(eng2_before_factor, eng2_after_factor)
 
 title <- "Indicate how weak or strong is your intention to play some game on your phone"
 names(eng2_factors) <- c("Before", "After")
-eng2_likert <- likert(eng2_factors)
+eng2_likert <- likert(eng2_factors, sort(names(eng2_factors)))
 plot(eng2_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
@@ -73,10 +73,13 @@ dev.off()
 eng_future_cycling_factor <- factor(answers_engagement$engagement_cycling_2w, likert_factors,labels = likert_labels)
 eng_future_cycling2_factor <- factor(answers_engagement$engagement_cycling_future, likert_factors,labels = likert_labels)
 
-eng_future_cycling_ex <- data.frame(eng_future_cycling2_factor)
+eng_future_cycling_ex <- data.frame(eng_future_cycling_factor,eng_future_cycling2_factor)
+names(eng_future_cycling_ex) <- c("in the next 2 weeks", "In the future")
+title <- "I intend to bicycle"
 eng_future_cycling_ex_likert <- likert(eng_future_cycling_ex)
 plot (eng_future_cycling_ex_likert)
-
+plot(eng_future_cycling_ex_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) +
+  guides(fill=guide_legend(title=NULL, nrow = 1))
 
 
 
@@ -103,9 +106,13 @@ plot(eng_future_app_likert, centered = TRUE) + ggtitle(title) + theme(plot.title
 eng_future_any_app_factor <- factor(answers_engagement$engagement_any_app_2w, likert_factors,labels = likert_labels)
 eng_future_any_app2_factor <- factor(answers_engagement$engagement_any_app_future, likert_factors,labels = likert_labels)
 
-eng_future_app_cycling <- data.frame(eng_future_any_app_factor, eng_future_any_app2_factor)
-eng_future_any_app_likert <- likert(eng_future_app_cycling)
+eng_future_any_app <- data.frame(eng_future_any_app_factor, eng_future_any_app2_factor)
+names(eng_future_any_app) <- c("in the next 2 weeks", "In the future")
+title <- "I intend to use the an app while cycling"
+eng_future_any_app_likert <- likert(eng_future_any_app)
 plot(eng_future_any_app_likert)
+plot(eng_future_any_app_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) +
+  guides(fill=guide_legend(title=NULL, nrow = 1))
 
 
 

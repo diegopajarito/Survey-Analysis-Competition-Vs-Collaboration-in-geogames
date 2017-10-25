@@ -104,3 +104,29 @@ satisfaction_competition_collaboration_after <- data.frame(satisfaction_cycling_
 satisfaction_competition_collaboration_after_likert <- likert(satisfaction_competition_collaboration_after, grouping = participants_group_factor)
 plot(satisfaction_competition_collaboration_after_likert)
 
+
+
+
+# Chages in Satisfaction with cycling
+likert_values_change <- c(-2,-1,0,1,2)
+likert_labels_change <- c('Less (-2)', 'Less (-1)', 'Equal (0)', 'More (+1)', 'More (+2)')
+change_satisfaction <- table_answers$satisfaction_cycling - table_answers$profile_cycling_1
+change_satisfaction_factor <-  data.frame( factor(change_satisfaction,likert_values_change, labels = likert_labels_change) )
+names(change_satisfaction_factor) <- c("Change in Satisfaction")
+change_satisfaction_likert <- likert(change_satisfaction_factor)
+plot(change_satisfaction_likert)
+
+
+
+
+change_engagement_cycling <- table_answers$eng
+
+engagemet cycling - engagement during the experiment
+engagement after - engagement during the experiment
+
+
+
+
+
+
+# 

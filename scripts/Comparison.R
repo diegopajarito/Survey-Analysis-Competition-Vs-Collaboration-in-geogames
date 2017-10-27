@@ -5,10 +5,10 @@
 
 require(likert)
 
-table_answers = read.csv('data/Questionnaire_Answers.csv')
+table_answers = read.csv('data/Questionnaire_Answers_temp.csv')
 
 likert_values <- c(-3,-2,-1,0,1,2,3)
-likert_labels <- c("Strongly disagree (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Strongly agree (3)")
+likert_labels <- c("Strongly disagree (-3)","(-2)","(-1)","(0)","(1)","(2)","Strongly agree (3)")
 likert_factors <- factor(likert_values)
 
 
@@ -23,7 +23,7 @@ collab3_factor <- factor(table_answers$collaboration_3, likert_factors, labels =
 
 # Comparison 1: Competition Vs. Collaboration
 comparison1_comp_coll <- data.frame(compet1_factor, collab1_factor)
-title <- "To which extent do you aggree or dissagree that these activities are enjoyable"
+title <- "To which extent do you consider these activities enjoyable"
 names(comparison1_comp_coll) <- c("Competing", "Collaborating")
 comparison1_likert <- likert(comparison1_comp_coll)
 plot(comparison1_likert, type = 'density')

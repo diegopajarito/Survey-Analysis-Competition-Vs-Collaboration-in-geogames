@@ -6,7 +6,7 @@
 
 require(likert)
 
-table_answers = read.csv('data/Questionnaire_Answers.csv')
+table_answers = read.csv('data/Questionnaire_Answers_temp.csv')
 
 answers_engagement <- table_answers[,75:86]
 
@@ -43,7 +43,7 @@ eng3_before_factor <- factor(answers_engagement$engagement_A3, likert_factors,la
 eng3_after_factor <- factor(answers_engagement$engagement_B3, likert_factors,labels = likert_labels)
 eng3_factors <- data.frame(eng3_before_factor, eng3_after_factor)
 
-title <- "Indicate how weak or strong is your intention to use an app while cycling"
+title <- "How is your intention to use an app while cycling"
 names(eng3_factors) <- c("Before", "After")
 eng3_likert <- likert(eng3_factors)
 plot(eng3_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 

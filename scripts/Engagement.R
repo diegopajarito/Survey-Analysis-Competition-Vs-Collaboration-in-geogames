@@ -25,6 +25,12 @@ eng1_likert <- likert(eng1_factors)
 plot(eng1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
+# Comparison between cities
+engagement_per_city = data.frame(eng1_before_factor)
+title <- "Indicate how weak or strong is your intention to use a bicycle"
+engagement_per_city_likert <- likert(engagement_per_city, grouping = table_answers$City)
+plot(engagement_per_city_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title=NULL, nrow = 1))
 
 # Engagement with games for mobile phones
 eng2_before_factor <- factor(answers_engagement$engagement_A2, likert_factors,labels = likert_labels)

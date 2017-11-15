@@ -6,7 +6,7 @@
 
 require(likert)
 
-table_answers = read.csv('data/Questionnaire_Answers.csv')
+table_answers = read.csv('data/Questionnaire_Answers_temp.csv')
 
 answers_engagement <- table_answers[,75:86]
 
@@ -25,6 +25,12 @@ eng1_likert <- likert(eng1_factors)
 plot(eng1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
+# Comparison between cities
+engagement_per_city = data.frame(eng1_before_factor)
+title <- "Indicate how weak or strong is your intention to use a bicycle"
+engagement_per_city_likert <- likert(engagement_per_city, grouping = table_answers$City)
+plot(engagement_per_city_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title=NULL, nrow = 1))
 
 # Engagement with games for mobile phones
 eng2_before_factor <- factor(answers_engagement$engagement_A2, likert_factors,labels = likert_labels)
@@ -43,7 +49,7 @@ eng3_before_factor <- factor(answers_engagement$engagement_A3, likert_factors,la
 eng3_after_factor <- factor(answers_engagement$engagement_B3, likert_factors,labels = likert_labels)
 eng3_factors <- data.frame(eng3_before_factor, eng3_after_factor)
 
-title <- "Indicate how weak or strong is your intention to use an app while cycling"
+title <- "How is your intention to use an app while cycling"
 names(eng3_factors) <- c("Before", "After")
 eng3_likert <- likert(eng3_factors)
 plot(eng3_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 

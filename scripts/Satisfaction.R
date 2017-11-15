@@ -5,7 +5,7 @@
 
 require(likert)
 
-table_answers = read.csv('data/Questionnaire_Answers.csv')
+table_answers = read.csv('data/Questionnaire_Answers_temp.csv')
 
 likert_values <- c(-3,-2,-1,0,1,2,3)
 likert_labels <- c("Strongly disagree (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Strongly agree (3)")
@@ -43,7 +43,12 @@ plot(satis_cycling_during_ex_likert, centered = FALSE) + ggtitle(title) + theme(
 
 
 
-# Satisfaction with the App during the experiment
+# Satisfaction grouped by city
+satis_per_city <- data.frame(satis_after_factor)
+title <- "Satisfaction with cycling"
+satis_per_city_likert <- likert(satis_per_city, grouping = table_answers$City)
+plot(satis_per_city_likert) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title=NULL, nrow = 1))
 
 
 

@@ -168,6 +168,24 @@ engagement after - engagement during the experiment
 
 
 
+
+
+
+
+
+
+# Satisfaction grouped by city
+satis_per_city <- data.frame(satis_after_factor)
+title <- "Satisfaction with cycling"
+satis_per_city_likert <- likert(satis_per_city, grouping = table_answers$City)
+plot(satis_per_city_likert) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title=NULL, nrow = 1))
+
+
+
+
+
+
 # 
 =======
 # 

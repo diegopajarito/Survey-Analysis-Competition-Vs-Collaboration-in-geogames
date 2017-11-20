@@ -1,29 +1,32 @@
-# Description: Graphs for the analysis of engagement with cycling, the experiment application
-# and cycling applications in general
+# Description: This script generates the graphs for anlyzing 
+# participants answers about Engagement with cycling.
 #
 # Comments: set your working directory to the project folder
 # Author: Diego Pajarito 
 
+# Setup
 require(likert)
-
-table_answers = read.csv('data/Questionnaire_Answers_temp.csv')
-
+rs = read.csv('data/Questionnaire_Answers.csv')
 answers_engagement <- table_answers[,75:86]
-
 likert_values <- c(-3,-2,-1,0,1,2,3)
 likert_labels <- c("Very weak (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Very strong (3)")
 likert_factors <- factor(likert_values)
 
+
+# Graph number 1
 # Engagement with cycling
 eng1_before_factor <- factor(answers_engagement$engagement_A1, likert_factors,labels = likert_labels)
 eng1_after_factor <- factor(answers_engagement$engagement_B1, likert_factors,labels = likert_labels)
 eng1_factors <- data.frame(eng1_before_factor, eng1_after_factor)
 
 names(eng1_factors) <- c("Before", "After")
-title <- "Indicate how weak or strong is your intention to use a bicycle"
+title <- "'My intention to use a bike is'"
 eng1_likert <- likert(eng1_factors)
 plot(eng1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
+
+
+
 
 # Comparison between cities
 engagement_per_city = data.frame(eng1_before_factor)

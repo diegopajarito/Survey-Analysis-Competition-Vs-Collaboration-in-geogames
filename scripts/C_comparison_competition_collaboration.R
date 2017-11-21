@@ -49,11 +49,11 @@ title <- "'I found checking ... enjoyable'"
 names(comparison2_comp_coll) <- c("my own progress", "my contribution")
 comparison2_likert <- likert(comparison2_comp_coll)
 plot(comparison2_likert, type = 'density')
-plot(comparison2_likert, centered = TRUE) + ggtitle(title) + 
+plot(comparison2_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) +
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
 svg(filename="graphs/C_Comparison_graph2.svg", 
     width=6.5, height=2.5, pointsize=10)
-plot(comparison2_likert, centered = TRUE) + ggtitle(title) + 
+plot(comparison2_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) +
   guides(fill=guide_legend(title=NULL, nrow = 1))
 dev.off()

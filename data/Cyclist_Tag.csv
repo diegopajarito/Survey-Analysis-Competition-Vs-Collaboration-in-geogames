@@ -1,4 +1,4 @@
-"_created_at"	_id	_updated_at	device	tag_coung	text	trip_count
+"_created_at"	_id	_updated_at	device	tag_count	text	trip_count
 2017-08-14T10:27:27.964Z	RDmXy8fj20	2017-08-14T10:27:38.944Z	abc123		tag	1
 2017-08-14T10:27:52.342Z	oWnM8aNnZH	2017-08-14T19:15:24.138Z	abc123	1	tag1	1
 2017-10-17T16:25:57.206Z	uGxfSQanhU	2017-10-17T16:25:57.206Z	9735960789aa8b49	1	Quick	1

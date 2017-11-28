@@ -1,4 +1,4 @@
-Tag,Category,Sense
+text,category,sentiment_polarity
 Fast,Speed ,Positive
 Quick,Speed ,Positive
 Speedy,Speed ,Positive

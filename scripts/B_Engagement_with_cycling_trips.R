@@ -1,6 +1,9 @@
 # Description: This script generates the graphs for anlyzing 
 # participants answers about Engagement with cycling.
 #
+# Day of campaign is the difference in days between the first day of the 
+# campaign at each city and the day of the record
+#
 # Comments: set your working directory to the project folder
 # Author: Diego Pajarito 
 

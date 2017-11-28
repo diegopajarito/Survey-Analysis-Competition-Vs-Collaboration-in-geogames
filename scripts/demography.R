@@ -5,12 +5,12 @@
 # Author: Diego Pajarito 
 
 # setup
-library(xtable)
+library(reshape2)
 library(ggplot2)
 
 
 rm(list=ls())
-table_answers = read.csv('data/Questionnaire_Answers.csv')
+table_answers <- read.csv('data/Questionnaire_Answers.csv')
 
 gender_values <- c(1,2,3)
 gender_labels <- c("Male","Female","Other")
@@ -39,19 +39,70 @@ demography_data <- data.frame(gender_factor, city_factors, marital_factor, table
 
 
 # Anova
+# Values that sumarises the basic statistics 
 summary(demography_data)
 
-summary(demography_data[city_factors == "Münster"])
+summary(demography_data[city_factors == "Münster",])
 summary(demography_data[city_factors == "Castelló",])
 summary(demography_data[city_factors == "Malta",])
 
-sapply(demography_data, mean, na.rm=TRUE)
 
-margin.table(table_answers)
+tapply(demography_data$table_answers.dem_age, demography_data$city_factors, summary)
 
-summary(gender_factor)
-xtable(summary(table_answers$dem_gender),type=)
-xtable(summary(demography_data), type)
+
+
+
+# Distribution of transport modes
+x_label <- ""
+y_label <- "Participants"
+
+transport_labels <- c("private car","Public transport","Bicycle","Walking")
+answers_transport <- table_answers[,8:11] 
+transports_total <- data.frame( modes=transport_labels, count=colSums(answers_transport, na.rm=TRUE) )
+
+answers_transport_muenster <- table_answers[table_answers$City == "Münster",8:11] 
+transports_muenster <- data.frame( modes=transport_labels, count=colSums(answers_transport_muenster, na.rm=TRUE) )
+transports_total$muenster = transports_muenster$count
+
+answers_transport_castello<- table_answers[table_answers$City == "Castelló",8:11] 
+transports_castello <- data.frame( modes=transport_labels, count=colSums(answers_transport_castello, na.rm=TRUE) )
+transports_total$castello = transports_castello$count
+
+answers_transport_malta<- table_answers[table_answers$City == "Malta",8:11] 
+transports_malta <- data.frame( modes=transport_labels, count=colSums(answers_transport_malta, na.rm=TRUE) )
+transports_total$malta = transports_malta$count
+
+ggplot(transports_total, aes(modes, muenster, fill=modes)) + 
+  geom_bar(position="dodge", stat="identity") +
+  coord_flip() +
+  xlab(x_label) + ylab(y_label) + 
+  theme(legend.position="none") + scale_fill_brewer(palette = "Greens", direction = -1)
+
+freq = table(col(transports_total), as.matrix((transports_total)))
+
+ggplot(transports_total, aes(modes )) +
+  geom_bar(aes(fill=modes), position = "dodge", stat="identity")
+
+
+
+
+
+
+tmp <- melt(answers_transport_city, id.vars = NULL)
+names(tmp) <- c('Occupation', 'ID')
+
+ggplot(data = tmp, aes(x = Occupation, fill= ID), stat="count") + geom_histogram()
+
+
+svg(filename="graphs/Demography_graph1.svg", 
+    width=6.5, height=3, pointsize=10)
+ggplot(transports_total, aes(modes, count, fill=modes)) + 
+  geom_bar(position="dodge", stat="identity") +
+  coord_flip() + ylim(0, 60) +
+  xlab(x_label) + ylab(y_label) + 
+  theme(legend.position="none") + scale_fill_brewer(palette = "Greens", direction = -1)
+dev.off()
+
 
 
 
@@ -102,16 +153,3 @@ barplot(table(answers_marital))
 pdf("graphs/marital_participants.pdf")
 barplot(table(answers_marital))
 dev.off()
-
-
-# transport mode
-transport_labels <- c("I use my private car","By public transport (including Taxi)","By bicycle","By walking")
-answers_transport <- table_answers[,8:11]
-transports_total <- data.frame( modes=transport_labels, count=colSums(answers_transport, na.rm=TRUE) )
-ggplot(transports_total, aes(modes, count)) + geom_col()
-
-pdf("graphs/transport_participants.pdf")
-ggplot(transports_total, aes(modes, count)) + geom_col()
-dev.off()
-
-

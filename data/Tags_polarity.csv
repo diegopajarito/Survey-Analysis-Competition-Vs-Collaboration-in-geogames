@@ -1,0 +1,73 @@
+text,category,sentiment_polarity
+Fast,Speed ,Positive
+Quick,Speed ,Positive
+Speedy,Speed ,Positive
+Moderated,Speed ,Neutral 
+Normal,Speed ,Neutral 
+Average,Speed ,Neutral 
+Slow-moving,Speed ,Negative
+Time-consuming,Speed ,Negative
+Brake-intensive,Speed ,Negative
+Inspiring,Comfor,Positive
+Light,Comfor,Positive
+Efficient,Comfor,Positive
+Relaxed,Comfor,Neutral 
+Worthy,Comfor,Neutral 
+Enough,Comfor,Neutral 
+Dull,Comfor,Negative
+Crowded,Comfor,Negative
+Disconnected,Comfor,Negative
+Safe,Safety,Positive
+Secure,Safety,Positive
+Sheltered,Safety,Positive
+Dangerous,Safety,Negative
+Risky,Safety,Negative
+Hazardous,Safety,Negative
+Veloz,Speed ,Positive
+Rápido,Speed ,Positive
+Ágil,Speed ,Positive
+Moderado,Speed ,Neutral 
+Normal,Speed ,Neutral 
+Promedio,Speed ,Neutral 
+Lento,Speed ,Negative
+Retardado,Speed ,Negative
+Prolongado,Speed ,Negative
+Inspirador,Comfor,Positive
+Suave,Comfor,Positive
+Eficiente,Comfor,Positive
+Relajado,Comfor,Neutral 
+Adecuado,Comfor,Neutral 
+Suficiente,Comfor,Neutral 
+Aburrido,Comfor,Negative
+Concurrido,Comfor,Negative
+Sin Conexión,Comfor,Negative
+Confiable,Safety,Positive
+Seguro,Safety,Positive
+Protegido,Safety,Positive
+Peligroso,Safety,Negative
+Arriesgado,Safety,Negative
+Escabroso,Safety,Negative
+Veloç,Speed ,Positive
+Ràpid,Speed ,Positive
+Àgil,Speed ,Positive
+Moderat,Speed ,Neutral 
+Normal,Speed ,Neutral 
+Promedio,Speed ,Neutral 
+Lent,Speed ,Negative
+Retardat,Speed ,Negative
+Prolongat,Speed ,Negative
+Inspirador,Comfor,Positive
+Suau,Comfor,Positive
+Eficient,Comfor,Positive
+Relaxat,Comfor,Neutral 
+Adequat,Comfor,Neutral 
+Suficient,Comfor,Neutral 
+Avorrit,Comfor,Negative
+Concorregut,Comfor,Negative
+Sense Conexió,Comfor,Negative
+Confiable,Safety,Positive
+Segur,Safety,Positive
+Desprotegit,Safety,Positive
+Perillós,Safety,Negative
+Arriscat,Safety,Negative
+Escabrós,Safety,Negative

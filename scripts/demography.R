@@ -1,10 +1,58 @@
-# Description:
+# Description: TThis script generates the resources for anlyzing 
+# participants demography.
 #
 # Comments: set your working directory to 
 # Author: Diego Pajarito 
 
+# setup
+library(xtable)
+library(ggplot2)
+
+
 rm(list=ls())
 table_answers = read.csv('data/Questionnaire_Answers.csv')
+
+gender_values <- c(1,2,3)
+gender_labels <- c("Male","Female","Other")
+gender_factors <- factor(gender_values)
+gender_factor <- factor(table_answers$dem_gender, gender_factors,labels = gender_labels)
+
+marital_values <- c(1,2,3,4,5,6)
+marital_labels <- c("Single","In relationship but not living together","In relationship and living together",
+                   "Married","Divorced or widowed","Other")
+marital_factors <- factor(marital_values)
+marital_factor <- factor(table_answers$dem_marital, marital_factors,labels = marital_labels)
+
+city_factors <- factor(table_answers$City)
+city_factors[1]
+
+transport_values <- c(1)
+transport_labels <- c("True")
+transport = data.frame(table_answers$dem_transport_walk, table_answers$dem_transport_bicycle, 
+                       table_answers$dem_transport_public, table_answers$dem_transport_car)
+names(transport) = c("Walk", "Bicycle", "Public Transport", "Private Car")
+ggplot(transport) +
+  geom_bar()
+  
+
+demography_data <- data.frame(gender_factor, city_factors, marital_factor, table_answers$dem_age)
+
+
+# Anova
+summary(demography_data)
+
+summary(demography_data[city_factors == "Münster"])
+summary(demography_data[city_factors == "Castelló",])
+summary(demography_data[city_factors == "Malta",])
+
+sapply(demography_data, mean, na.rm=TRUE)
+
+margin.table(table_answers)
+
+summary(gender_factor)
+xtable(summary(table_answers$dem_gender),type=)
+xtable(summary(demography_data), type)
+
 
 
 # Age of participants

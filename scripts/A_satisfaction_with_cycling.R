@@ -26,7 +26,8 @@ satis_likert <- likert(satis_factors)
 plot(satis_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
-pdf("graphs/sastisfaction.pdf")
+svg(filename="graphs/A_sastisfaction_graph1.svg", 
+    width=6.5, height=3, pointsize=10)
 plot(satis_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 dev.off()
@@ -35,8 +36,9 @@ dev.off()
 
 # Graph number 2
 # Satisfaction with cycling / Mobile App during the experiment 
-satis_cycling_during_ex_factor <- factor(table_answers$satisfaction_app_1, likert_factors, labels = likert_labels)
-satis_app_during_ex_factor <- factor(table_answers$satisfaction_app_2, likert_factors, labels = likert_labels)
+likert_labels_satisfaction <- c("Very dissatisfied (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Very satisfied (3)")
+satis_cycling_during_ex_factor <- factor(table_answers$satisfaction_app_1, likert_factors, labels = likert_labels_satisfaction)
+satis_app_during_ex_factor <- factor(table_answers$satisfaction_app_2, likert_factors, labels = likert_labels_satisfaction)
 satis_cycling_during_ex <- data.frame(satis_app_during_ex_factor, satis_cycling_during_ex_factor)
 names
 title <- "During the experiment, how satisfied or dissatisfied were with:"
@@ -45,7 +47,8 @@ satis_cycling_during_ex_likert <- likert(satis_cycling_during_ex)
 plot(satis_cycling_during_ex_likert) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
-pdf("graphs/sastisfaction.pdf")
+svg(filename="graphs/A_sastisfaction_graph2.svg", 
+    width=6.5, height=3, pointsize=10)
 plot(satis_cycling_during_ex_likert) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 dev.off()

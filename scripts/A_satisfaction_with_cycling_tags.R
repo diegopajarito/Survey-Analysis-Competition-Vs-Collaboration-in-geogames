@@ -26,13 +26,15 @@ y_label <- "Number of tags per day"
 # Basic plot line with the number of tags recorded per day of the campaign
 ggplot(data=tags_joined, aes(campaign_day)) +
   geom_freqpoly(bins = 30) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label)
+  xlim(1, 30) + xlab(x_label) + ylab(y_label) + 
+  theme_bw()
 
 svg(filename="graphs/B_Satisfaction_with_cycling_tags_graph1.svg", 
     width=6.5, height=3.5, pointsize=10)
 ggplot(data=tags_joined, aes(campaign_day)) +
   geom_freqpoly(bins = 30) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label)
+  xlim(1, 30) + xlab(x_label) + ylab(y_label) + 
+  theme_bw()
 dev.off()
 
 
@@ -40,19 +42,32 @@ dev.off()
 legend_title <- "Sentiment Polarity"
 ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
   geom_area(stat = "bin") +
+  theme_bw() +
+  scale_fill_manual(values = c("Positive" = "#5ab4ac",
+                               "Negative" = "#d8b365",
+                               "Neutral " = "#c7eae5"),
+                    na.value = "#bdbdbd") +
   xlim(1, 30) + xlab(x_label) + ylab(y_label) +
   theme(legend.position = 'bottom') + 
-  labs(fill = legend_title)
+  labs(fill = legend_title) +
+  geom_smooth(method = "lm")
 
 svg(filename="graphs/B_Satisfaction_with_cycling_tags_graph2.svg", 
     width=6.5, height=3.5, pointsize=10)
 ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
   geom_area(stat = "bin") +
+  theme_bw() +
+  scale_fill_manual(values = c("Positive" = "#5ab4ac",
+                               "Negative" = "#d8b365",
+                               "Neutral " = "#c7eae5"),
+                    na.value = "#bdbdbd") +
   xlim(1, 30) + xlab(x_label) + ylab(y_label) +
   theme(legend.position = 'bottom') + 
   labs(fill = legend_title)
 dev.off()
 
+# New Tags or tags without any associated polarity
+tags_joined[is.na(tags_joined$sentiment_polarity),2]
 
 # Histogram for the number of trips per day
 

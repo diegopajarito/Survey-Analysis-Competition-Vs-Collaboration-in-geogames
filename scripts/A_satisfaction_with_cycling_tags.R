@@ -49,11 +49,11 @@ ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
                     na.value = "#bdbdbd") +
   xlim(1, 30) + xlab(x_label) + ylab(y_label) +
   theme(legend.position = 'bottom') + 
-  labs(fill = legend_title) +
-  geom_smooth(method = "lm")
+  labs(fill = legend_title)
+  
 
 svg(filename="graphs/B_Satisfaction_with_cycling_tags_graph2.svg", 
-    width=6.5, height=3.5, pointsize=10)
+    width=9, height=4, pointsize=10)
 ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
   geom_area(stat = "bin") +
   theme_bw() +
@@ -63,7 +63,7 @@ ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
                     na.value = "#bdbdbd") +
   xlim(1, 30) + xlab(x_label) + ylab(y_label) +
   theme(legend.position = 'bottom') + 
-  labs(fill = legend_title)
+  labs(fill = legend_title) 
 dev.off()
 
 # New Tags or tags without any associated polarity

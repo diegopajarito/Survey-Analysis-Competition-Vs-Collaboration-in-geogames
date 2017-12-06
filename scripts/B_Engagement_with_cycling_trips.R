@@ -20,15 +20,17 @@ y_label <- "Number of trips"
 
 
 # Basic line plot with points
-ggplot(data=trips_joined, aes(campaign_day)) +
+ggplot(data=trips_joined[trips_joined$city == "Malta",], aes(campaign_day)) +
   geom_freqpoly(bins = 30) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label)
+  xlim(1, 30) + xlab(x_label) + ylab(y_label) +
+  theme_bw()
 
 svg(filename="graphs/B_Engagement_with_cycling_trips_graph1.svg", 
-    width=6.5, height=3.5, pointsize=10)
+    width=9, height=4, pointsize=10)
 ggplot(data=trips_joined, aes(campaign_day)) +
   geom_freqpoly(bins = 30) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label)
+  xlim(1, 30) + xlab(x_label) + ylab(y_label) +
+  theme_bw()
 dev.off()
 
 # Histogram with trips per day

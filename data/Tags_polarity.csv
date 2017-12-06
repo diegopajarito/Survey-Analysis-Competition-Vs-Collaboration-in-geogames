@@ -1,73 +1,73 @@
-text,category,sentiment_polarity
-Fast,Speed ,Positive
-Quick,Speed ,Positive
-Speedy,Speed ,Positive
-Moderated,Speed ,Neutral 
-Normal,Speed ,Neutral 
-Average,Speed ,Neutral 
-Slow-moving,Speed ,Negative
-Time-consuming,Speed ,Negative
-Brake-intensive,Speed ,Negative
-Inspiring,Comfor,Positive
-Light,Comfor,Positive
-Efficient,Comfor,Positive
-Relaxed,Comfor,Neutral 
-Worthy,Comfor,Neutral 
-Enough,Comfor,Neutral 
-Dull,Comfor,Negative
-Crowded,Comfor,Negative
-Disconnected,Comfor,Negative
-Safe,Safety,Positive
-Secure,Safety,Positive
-Sheltered,Safety,Positive
-Dangerous,Safety,Negative
-Risky,Safety,Negative
-Hazardous,Safety,Negative
-Veloz,Speed ,Positive
-Rápido,Speed ,Positive
-Ágil,Speed ,Positive
-Moderado,Speed ,Neutral 
-Normal,Speed ,Neutral 
-Promedio,Speed ,Neutral 
-Lento,Speed ,Negative
-Retardado,Speed ,Negative
-Prolongado,Speed ,Negative
-Inspirador,Comfor,Positive
-Suave,Comfor,Positive
-Eficiente,Comfor,Positive
-Relajado,Comfor,Neutral 
-Adecuado,Comfor,Neutral 
-Suficiente,Comfor,Neutral 
-Aburrido,Comfor,Negative
-Concurrido,Comfor,Negative
-Sin Conexión,Comfor,Negative
-Confiable,Safety,Positive
-Seguro,Safety,Positive
-Protegido,Safety,Positive
-Peligroso,Safety,Negative
-Arriesgado,Safety,Negative
-Escabroso,Safety,Negative
-Veloç,Speed ,Positive
-Ràpid,Speed ,Positive
-Àgil,Speed ,Positive
-Moderat,Speed ,Neutral 
-Normal,Speed ,Neutral 
-Promedio,Speed ,Neutral 
-Lent,Speed ,Negative
-Retardat,Speed ,Negative
-Prolongat,Speed ,Negative
-Inspirador,Comfor,Positive
-Suau,Comfor,Positive
-Eficient,Comfor,Positive
-Relaxat,Comfor,Neutral 
-Adequat,Comfor,Neutral 
-Suficient,Comfor,Neutral 
-Avorrit,Comfor,Negative
-Concorregut,Comfor,Negative
-Sense Conexió,Comfor,Negative
-Confiable,Safety,Positive
-Segur,Safety,Positive
-Desprotegit,Safety,Positive
-Perillós,Safety,Negative
-Arriscat,Safety,Negative
-Escabrós,Safety,Negative
+text,category,sentiment_polarity,text_en
+Fast,Speed ,Positive,Fast
+Quick,Speed ,Positive,Quick
+Speedy,Speed ,Positive,Speedy
+Moderated,Speed ,Neutral ,Moderated
+Normal,Speed ,Neutral ,Normal
+Average,Speed ,Neutral ,Average
+Slow-moving,Speed ,Negative,Slow-moving
+Time-consuming,Speed ,Negative,Time-consuming
+Brake-intensive,Speed ,Negative,Brake-intensive
+Inspiring,Comfor,Positive,Inspiring
+Light,Comfor,Positive,Light
+Efficient,Comfor,Positive,Efficient
+Relaxed,Comfor,Neutral ,Relaxed
+Worthy,Comfor,Neutral ,Worthy
+Enough,Comfor,Neutral ,Enough
+Dull,Comfor,Negative,Dull
+Crowded,Comfor,Negative,Crowded
+Disconnected,Comfor,Negative,Disconnected
+Safe,Safety,Positive,Safe
+Secure,Safety,Positive,Secure
+Sheltered,Safety,Positive,Sheltered
+Dangerous,Safety,Negative,Dangerous
+Risky,Safety,Negative,Risky
+Hazardous,Safety,Negative,Hazardous
+Veloz,Speed ,Positive,Fast
+Rápido,Speed ,Positive,Quick
+Ágil,Speed ,Positive,Speedy
+Moderado,Speed ,Neutral ,Moderated
+Normal,Speed ,Neutral ,Normal
+Promedio,Speed ,Neutral ,Average
+Lento,Speed ,Negative,Slow-moving
+Retardado,Speed ,Negative,Time-consuming
+Prolongado,Speed ,Negative,Brake-intensive
+Inspirador,Comfor,Positive,Inspiring
+Suave,Comfor,Positive,Light
+Eficiente,Comfor,Positive,Efficient
+Relajado,Comfor,Neutral ,Relaxed
+Adecuado,Comfor,Neutral ,Worthy
+Suficiente,Comfor,Neutral ,Enough
+Aburrido,Comfor,Negative,Dull
+Concurrido,Comfor,Negative,Crowded
+Sin Conexión,Comfor,Negative,Disconnected
+Confiable,Safety,Positive,Safe
+Seguro,Safety,Positive,Secure
+Protegido,Safety,Positive,Sheltered
+Peligroso,Safety,Negative,Dangerous
+Arriesgado,Safety,Negative,Risky
+Escabroso,Safety,Negative,Hazardous
+Veloç,Speed ,Positive,Fast
+Ràpid,Speed ,Positive,Quick
+Àgil,Speed ,Positive,Speedy
+Moderat,Speed ,Neutral ,Moderated
+Normal,Speed ,Neutral ,Normal
+Promedio,Speed ,Neutral ,Average
+Lent,Speed ,Negative,Slow-moving
+Retardat,Speed ,Negative,Time-consuming
+Prolongat,Speed ,Negative,Brake-intensive
+Inspirador,Comfor,Positive,Inspiring
+Suau,Comfor,Positive,Light
+Eficient,Comfor,Positive,Efficient
+Relaxat,Comfor,Neutral ,Relaxed
+Adequat,Comfor,Neutral ,Worthy
+Suficient,Comfor,Neutral ,Enough
+Avorrit,Comfor,Negative,Dull
+Concorregut,Comfor,Negative,Crowded
+Sense Conexió,Comfor,Negative,Disconnected
+Confiable,Safety,Positive,Safe
+Segur,Safety,Positive,Secure
+Desprotegit,Safety,Positive,Sheltered
+Perillós,Safety,Negative,Dangerous
+Arriscat,Safety,Negative,Risky
+Escabrós,Safety,Negative,Hazardous

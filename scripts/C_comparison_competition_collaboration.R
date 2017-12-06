@@ -13,6 +13,7 @@ likert_values <- c(-3,-2,-1,0,1,2,3)
 likert_labels <- c("Strongly disagree (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Strongly agree (3)")
 likert_factors <- factor(likert_values)
 
+
 # Getting participants group
 participants_group <- ifelse(table_answers$competition_1 >= -3, "Competition")
 participants_group <- ifelse(!is.na(participants_group) & table_answers$collaboration_1 >= -3, "Collaboration",participants_group)
@@ -36,9 +37,10 @@ plot(comparison1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
 svg(filename="graphs/C_Comparison_graph1.svg", 
-    width=6.5, height=2.5, pointsize=10)
+    width=9, height=2.7, pointsize=10)
 plot(comparison1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) +
-  guides(fill=guide_legend(title=NULL, nrow = 1))
+  guides(fill=guide_legend(title=NULL, nrow = 1)) +
+  theme(legend.position = "none")
 dev.off()
 
 

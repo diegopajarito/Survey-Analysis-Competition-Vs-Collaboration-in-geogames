@@ -6,26 +6,30 @@
 
 # Setup
 require(likert)
-rs = read.csv('data/Questionnaire_Answers.csv')
-answers_engagement <- table_answers[,75:86]
+table_answers = read.csv('data/Questionnaire_Answers.csv')
 likert_values <- c(-3,-2,-1,0,1,2,3)
 likert_labels <- c("Very weak (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Very strong (3)")
 likert_factors <- factor(likert_values)
 
 
+
 # Graph number 1
 # Engagement with cycling
-eng1_before_factor <- factor(answers_engagement$engagement_A1, likert_factors,labels = likert_labels)
-eng1_after_factor <- factor(answers_engagement$engagement_B1, likert_factors,labels = likert_labels)
+eng1_before_factor <- factor(table_answers$engagement_A1, likert_factors,labels = likert_labels)
+eng1_after_factor <- factor(table_answers$engagement_B1, likert_factors,labels = likert_labels)
 eng1_factors <- data.frame(eng1_before_factor, eng1_after_factor)
 
 names(eng1_factors) <- c("Before", "After")
 title <- "'My intention to use a bike is'"
-eng1_likert <- likert(eng1_factors)
+eng1_likert <- likert(eng1_factors, )
 plot(eng1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1))
 
-
+svg(filename="graphs/B_Engagemen_with_cycling_graph1.svg", 
+    width=9, height=3.2, pointsize=10)
+plot(comparison1_likert, centered = TRUE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) +
+  guides(fill=guide_legend(title=NULL, nrow = 1)) 
+dev.off()
 
 
 # Comparison between cities

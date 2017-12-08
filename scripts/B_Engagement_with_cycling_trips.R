@@ -62,5 +62,20 @@ dev.off()
 
 # Bar plot showing the amount of trips per day of the week
 ggplot(data = trips_joined, aes(day_of_week_trip, fill = city)) +
-  geom_bar(stat = "count", )
+  geom_bar(stat = "count" )
+
+
+
+# Graph showing the length of the trip 
+
+trip_lengt <- as.POSIXct(trips_joined$trip_stop) - as.POSIXct(trips_joined$trip_start)
+GG
+
+ggplot( trip_lengt, aes(nrow(trip_lengt) )) +
+  geom_bar()
+
+df <- data.frame(x1 = 2.62, x2 = 3.57, y1 = 21.0, y2 = 15.0)
+ggplot() +
+  geom_curve(aes(x = x1, y = y1, xend = x2, yend = y2, colour = "curve"), data = df) +
+  geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2, colour = "segment"), data = df)
 

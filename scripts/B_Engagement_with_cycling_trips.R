@@ -67,9 +67,18 @@ ggplot(data = trips_joined, aes(day_of_week_trip, fill = city)) +
 
 
 # Graph showing the length of the trip 
+trips_joined$trip_stop
+strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS")
 
-trip_lengt <- as.POSIXct(trips_joined$trip_stop) - as.POSIXct(trips_joined$trip_start)
-GG
+as.POSIXct((as.character(trips_joined$trip_stop)),
+           format = "%Y-%m-%dT%H:%M:%OS",
+           tz = "Z")
+
+format(as.POSIXlt(trips_joined$trip_stop),format = '%T')
+time_txt <- sub('.*T(.*)Z', '\\1', trips_joined$trip_stop)
+strptime(time_txt, format = "%H:%M:%OS")
+
+trip_lengt <- unclass(as.POSIXlt(trips_joined$trip_stop)) - as.POSIXct(trips_joined$trip_start)
 
 ggplot( trip_lengt, aes(nrow(trip_lengt) )) +
   geom_bar()

@@ -166,13 +166,25 @@ enjoyment_cc %>%                         # "Start with the data set we imported,
 
 # T Test
 t.test(enjoyment_competition$enjoyment_1, enjoyment_collaboration$enjoyment_1)
+t.test(enjoyment_competition[enjoyment_competition$city == "Castelló",]$enjoyment_1, 
+       enjoyment_collaboration[enjoyment_collaboration$city == "Castelló",]$enjoyment_1)
+t.test(enjoyment_competition[enjoyment_competition$city == "Malta",]$enjoyment_1, 
+       enjoyment_collaboration[enjoyment_collaboration$city == "Malta",]$enjoyment_1)
+t.test(enjoyment_competition[enjoyment_competition$city == "Münster",]$enjoyment_1, 
+       enjoyment_collaboration[enjoyment_collaboration$city == "Münster",]$enjoyment_1)
 t.test(enjoyment_competition$enjoyment_2, enjoyment_collaboration$enjoyment_2)
 t.test(enjoyment_competition$enjoyment_3, enjoyment_collaboration$enjoyment_3)
 
 # Effect size - Cohen's effect size
 cohen.d(enjoyment_competition$enjoyment_1, enjoyment_collaboration$enjoyment_1)
+cohen.d(enjoyment_competition[enjoyment_competition$city == "Castelló",]$enjoyment_1, 
+        enjoyment_collaboration[enjoyment_collaboration$city == "Castelló",]$enjoyment_1)
+cohen.d(enjoyment_competition[enjoyment_competition$city == "Malta",]$enjoyment_1, 
+        enjoyment_collaboration[enjoyment_collaboration$city == "Malta",]$enjoyment_1)
+cohen.d(enjoyment_competition[enjoyment_competition$city == "Münster",]$enjoyment_1, 
+        enjoyment_collaboration[enjoyment_collaboration$city == "Münster",]$enjoyment_1)
 cohen.d(enjoyment_competition$enjoyment_2, enjoyment_collaboration$enjoyment_2)
-cohen.d(enjoyment_competition$enjoyment_3, enjoyment_collaboration$enjoyment_3) 
+cohen.d(enjoyment_competition$enjoyment_3, enjoyment_collaboration$enjoyment_3,  na.rm=TRUE) 
 
 # Boxplot  
 p_enjoyment_1 <- ggplot(data = enjoyment_cc, aes(y = enjoyment_1, x = group, fill = group)) 
@@ -192,4 +204,5 @@ p_enjoyment_2 + geom_boxplot()
 p_enjoyment_3 + geom_boxplot()
 
 p_enjoyment_1 + geom_boxplot() + facet_grid(. ~ city)
-
+p_enjoyment_2 + geom_boxplot() + facet_grid(. ~ city)
+p_enjoyment_3 + geom_boxplot() + facet_grid(. ~ city)

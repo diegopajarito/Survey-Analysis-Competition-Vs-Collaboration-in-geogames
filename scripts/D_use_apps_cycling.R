@@ -11,6 +11,7 @@ library(ggplot2)
 table_answers <- read.csv('data/Questionnaire_Answers.csv', stringsAsFactors=FALSE)
 
 table_answers <- table_answers[table_answers$City == "Münster",]
+table_answers <- table_answers[which( table_answers$competition_1 >= -3 ),]
 
 app_cycling <- data.frame(table_answers$gaming_app_cycling_googlefit, table_answers$gaming_app_cycling_bikecitizens, table_answers$gaming_app_cycling_endomondo,
                           table_answers$gaming_app_cycling_fitbit, table_answers$gaming_app_cycling_human, table_answers$gaming_app_cycling_runtastic, table_answers$gaming_app_cycling_strava,

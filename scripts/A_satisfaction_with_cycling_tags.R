@@ -11,13 +11,22 @@
 # Setup 
 library(ggplot2)
 
-table_participants <- read.csv('data/Cyclist_Experiment.csv')
+table_participants <- read.csv('data/Cyclist_Experiment.csv') 
+table_answers <- read.csv('data/Questionnaire_Answers.csv')
 table_tags <- read.csv('data/Cyclist_Tag.csv', sep = '\t')
 table_tags_polarity <- read.csv('data/Tags_polarity.csv')
+participants_competition <- data.frame(table_answers[which(table_answers$competition_1 >= -3),]$Participant)
+participants_competition$group <- "Competition"
+names(participants_competition) <- c("participant", "group")
+participants_collaboration <- data.frame(table_answers[which(table_answers$collaboration_1 >= -3),]$Participant)
+participants_collaboration$group <- "Collaboration"
+names(participants_collaboration) <- c("participant", "group")
+participants_group <- rbind(participants_collaboration, participants_competition)
 table_tags_sense_joined <- merge(table_tags, table_tags_polarity, all = TRUE)
 tags_joined <- merge(table_tags_sense_joined,table_participants)
 tags_joined$campaign_day <- as.Date(tags_joined$X_created_at) - as.Date(tags_joined$questionnaire1) +1
 trips_joined$day_of_week_trip <- weekdays(as.Date(trips_joined$trip_start), abbreviate = TRUE)
+tags_group <- merge(tags_joined, participants_group)
 
 x_label <- "Day of the campaign"
 y_label <- "Number of tags per day"
@@ -83,3 +92,16 @@ ggplot(data=trips_joined, aes(campaign_day, colour = city)) +
   xlim(1, 30) + xlab(x_label) + ylab(y_label) +
   theme(legend.position = "bottom")
 dev.off()
+
+
+
+
+
+# Tags Group
+p <-ggplot(data=tags_group, aes(x=group, fill=sentiment_polarity)) 
+
+p + geom_bar(stat="count")
+
+
+# Horizontal bar plot
+p + coord_flip()

@@ -12,8 +12,29 @@ library(ggplot2)
 
 table_participants = read.csv('data/Cyclist_Experiment.csv')
 table_trips = read.csv('data/Cyclist_Trip.csv', sep = '\t')
+table_answers = read.csv('data/Questionnaire_Answers.csv')
 trips_joined = merge(table_participants,table_trips)
+
+trips_joined$day_time <-  format ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")
+trips_joined$trip_start <- difftime( strptime(as.character(trips_joined$trip_start), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") ) 
+trips_joined$trip_stop <- difftime( strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") )
+
+
+
+
+trip_start = data.frame(trips_joined$city, trips_joined$device, trips_joined$trip_count, trips_joined$day_time, trips_joined$trip_start)
+names(trip_start) <- c("city", "device", "trip_count", "day_time", "time")
+trip_start$time_type <- "start"
+trip_stop = data.frame(trips_joined$city, trips_joined$device, trips_joined$trip_count, trips_joined$day_time, trips_joined$trip_stop)
+names(trip_stop) <- c("city", "device", "trip_count", "day_time", "time")
+trip_stop$time_type <- "stop"
+trip_times <- rbind(trip_start, trip_stop)
+
+
+
+
 trips_joined$campaign_day = as.Date(trips_joined$X_created_at) - as.Date(trips_joined$questionnaire1) +1
+trips_joined$campaign_time = strptime(trips_joined$X_created_at, format= "%Y-%m-%dT%H:%M:%OS") - strptime(trips_joined$questionnaire1, format= "%Y-%m-%dT%H:%M:%OS")  
 trips_joined$day_of_week_trip = weekdays(as.Date(trips_joined$trip_start), abbreviate = TRUE)
 x_label <- "Day of the campaign"
 y_label <- "Number of trips"
@@ -25,66 +46,35 @@ ggplot(data=trips_joined[trips_joined$city == "Malta",], aes(campaign_day)) +
   xlim(1, 30) + xlab(x_label) + ylab(y_label) +
   theme_bw()
 
-svg(filename="graphs/B_Engagement_with_cycling_trips_graph1.svg", 
-    width=9, height=4, pointsize=10)
-ggplot(data=trips_joined, aes(campaign_day)) +
-  geom_freqpoly(bins = 30) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label) +
-  theme_bw()
-dev.off()
-
-# Histogram with trips per day
-ggplot(data=trips_joined, aes(campaign_day)) +
-  geom_histogram() +
-  xlim(0, 20)
-  
-
-# Histogram for the number of trips per day
-
-
-ggplot(data=trips_joined, aes(campaign_day, colour = city)) +
-  geom_freqpoly( bins = 30 ) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label) +
-  theme(legend.position = "bottom")
-
-svg(filename="graphs/B_Engagement_with_cycling_trips_cities_graph.svg", 
-    width=6.5, height=3.5, pointsize=10)
-ggplot(data=trips_joined, aes(campaign_day, colour = city)) +
-  geom_freqpoly( bins = 30 ) +
-  xlim(1, 30) + xlab(x_label) + ylab(y_label) +
-  theme(legend.position = "bottom")
-dev.off()
-
-
-# Münster, started on Tuesday
-# Castelló, started on Tuesday
-# Malta, started on Thursday
-
-# Bar plot showing the amount of trips per day of the week
-ggplot(data = trips_joined, aes(day_of_week_trip, fill = city)) +
-  geom_bar(stat = "count" )
-
 
 
 # Graph showing the length of the trip 
-trips_joined$trip_stop
-strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS")
 
-as.POSIXct((as.character(trips_joined$trip_stop)),
-           format = "%Y-%m-%dT%H:%M:%OS",
-           tz = "Z")
-
-format(as.POSIXlt(trips_joined$trip_stop),format = '%T')
-time_txt <- sub('.*T(.*)Z', '\\1', trips_joined$trip_stop)
-strptime(time_txt, format = "%H:%M:%OS")
 
 trip_lengt <- unclass(as.POSIXlt(trips_joined$trip_stop)) - as.POSIXct(trips_joined$trip_start)
 
-ggplot( trip_lengt, aes(nrow(trip_lengt) )) +
-  geom_bar()
+format(trips_joined$trip_start,format = '%T')
 
-df <- data.frame(x1 = 2.62, x2 = 3.57, y1 = 21.0, y2 = 15.0)
-ggplot() +
-  geom_curve(aes(x = x1, y = y1, xend = x2, yend = y2, colour = "curve"), data = df) +
-  geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2, colour = "segment"), data = df)
 
+
+p <- ggplot(trip_times, aes( time, day_time, fill=device ))
+p + geom_point() + geom_line() + xlim(0, 10000)
+p + geom_line() + xlim(0, 2500)
+
+
+
+
+
+
+
+
+
+
+
+df <- data.frame(dose=c("D0.5", "D1", "D2"),
+                 len=c(4.2, 10, 29.5))
+head(df)
+
+ggplot(data=df, aes(x=dose, y=len, group=1)) +
+  geom_line() +
+  geom_point()

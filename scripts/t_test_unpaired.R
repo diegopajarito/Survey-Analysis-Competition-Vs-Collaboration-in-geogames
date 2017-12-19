@@ -29,7 +29,7 @@ table_answers <- table_answers[!is.na(table_answers$group),]
 
 # Un-paired test
 # Satisfaction with cycling after the experiment - Comparison between groups collaboration / competitition
-
+shapiro.test(table_answers$satisfaction_cycling)
 satisfaction <- data.frame(table_answers$Participant, table_answers$City, table_answers$group, table_answers$satisfaction_cycling, table_answers$satisfaction_1)
 names(satisfaction) <- c("participant", "city", "group", "s_cycling", "s_during_experiment")
 

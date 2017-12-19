@@ -62,7 +62,7 @@ ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
   
 
 svg(filename="graphs/B_Satisfaction_with_cycling_tags_graph2.svg", 
-    width=9, height=4, pointsize=10)
+    width=9, height=4, pointsize=10)09< 
 ggplot(data=tags_joined, aes(campaign_day, fill = sentiment_polarity)) +
   geom_area(stat = "bin") +
   theme_bw() +

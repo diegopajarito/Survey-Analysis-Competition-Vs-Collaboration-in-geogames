@@ -98,10 +98,46 @@ dev.off()
 
 
 # Tags Group
-p <-ggplot(data=tags_group, aes(x=group, fill=sentiment_polarity)) 
+tags_group[is.na(tags_group$sentiment_polarity),]$sentiment_polarity <- "Neutral "
+aggregate(tags_group$tag_count, by = list(df$Gene), max)
 
-p + geom_bar(stat="count")
+p <-ggplot(data=tags_group, aes(x=campaign_day, fill=sentiment_polarity)) 
+p + geom_bar(stat="count") + facet_grid(sentiment_polarity ~ .)
 
+p <-ggplot(data=tags_group, aes(x=campaign_day) ) 
+p + geom_bar(stat="count", width = 0.4, aes(fill = group), position = "dodge") + xlim(0,20) + facet_grid(sentiment_polarity ~ .) + theme_bw() + theme(legend.position = "bottom")
+
+  
+  
+p_tags_line <- ggplot(data=tags_group[tags_group$participant == "15",], aes(x=campaign_day, y=tag_count, group=participant))
+p_tags_line + geom_line() 
+
+
+# plot everything
+ggplot(data.m, aes(Names, value)) +   
+  geom_bar(aes(fill = variable), position = "dodge", stat="identity")
 
 # Horizontal bar plot
 p + coord_flip()
+
+
+
+
+
+
+
+
+
+# aggregate
+aggregate(df$Value, by = list(df$Gene), max)
+aggregate(Value ~ Gene, data = df, max)
+
+# tapply
+tapply(df$Value, df$Gene, max)
+
+# split + lapply
+lapply(split(df, df$Gene), function(y) max(y$Value))
+
+# plyr
+require(plyr)
+ddply(df, .(Gene), summarise, Value = max(Value))

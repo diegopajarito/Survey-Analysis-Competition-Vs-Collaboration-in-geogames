@@ -11,14 +11,52 @@ source("scripts/setup.R")
 
 library(ggplot2)
 require(lubridate)
+library(dplyr)
 
+# Defining the variables that define the duration of the trip, hour of the day when the trip starts
 trips_joined$day_time <-  format ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")
 trips_joined$day_time <- strptime(trips_joined$day_time, format = "%H:%M:%OS")
+
 trips_joined$hour_day <- hour(trips_joined$day_time) + minute(trips_joined$day_time) / 60.0
-trips_joined <- trips_joined[trips_joined$trip_length < 180 & trips_joined$trip_length >.5,]
 trips_joined$trip_length <- difftime( strptime(trips_joined$trip_stop, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), units='mins') 
 trips_joined$trip_start_experiment <- difftime ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trips_joined$questionnaire1, format= "%Y-%m-%dT%H:%M:%OS"), units='days') 
 trips_joined$trip_stop_experiment <- difftime( strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") , units='days')
+
+# Trip length in minutes 
+ggplot(trips_joined, aes(x=trip_length, color=group)) + 
+  geom_density() +
+  geom_rug(aes(x = trip_length, y = 0), position = position_jitter(height = 0)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+  
+
+trips_valid <- trips_joined[trips_joined$trip_length < 60 & trips_joined$trip_length >.5 & trips_joined$group != as.factor("none"),]
+ggplot(trips_valid, aes(x=trip_length, color=group)) + 
+  geom_histogram(aes(x = trip_length, y = ..density..),
+                 binwidth = 1, fill = "white", color = "black") +
+  geom_density(n=1028, bw=4.4) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+d_competition <- density(as.numeric(trips_valid[trips_valid$group == "Competition",]$trip_length), from = 0.5, to = 60, n=1028, bw=4.4)
+plot (d_competition)
+d_collaboration <- density(as.numeric(trips_valid[trips_valid$group == "Collaboration",]$trip_length), from = 0.5, to = 60, n=1028, bw=4.4)
+plot (d_collaboration)
+
+plot(d_competition$y/d_collaboration$y, type="l")
+plot(d_competition$x/d_collaboration$x, type="l")
+plot(d_competition$x/d_collaboration$x)
+delta_x = d_competition$x - d_collaboration$x
+range (trips_valid$trip_length)
+range (trips_valid[trips_valid$group == "Competition",]$trip_length)
+range (trips_valid[trips_valid$group == "Collaboration",]$trip_length)
+
+
+# grouping
+trips_valid$day_time <- as.numeric(trips_valid$day_time)
+groups_ <- group_by(trips_valid, group, participant)
+summarize(groups_, mean = mean(trip_length), n = n() )
+
 
 trip_start = data.frame(trips_joined$city, trips_joined$device, trips_joined$group, trips_joined$trip_count, trips_joined$day_time, trips_joined$trip_start_experiment, trips_joined$trip_length)
 names(trip_start) <- c("city", "device", "group", "trip_count", "day_time", "time", "trip_length")

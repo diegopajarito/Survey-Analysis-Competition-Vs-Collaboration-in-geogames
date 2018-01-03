@@ -63,19 +63,36 @@ p + geom_line() + xlim(0, 2500)
 p + geom_point() + theme(legend.position = 'bottom')
 
 
+=======
+# Basic line plot with points
+ggplot(data=trips_joined, aes(trip_length)) +
+  geom_freqpoly() +
+  xlim(1, 120) + xlab(x_label) + ylab(y_label) +
+  theme_bw() + facet_grid(group ~ .)
+>>>>>>> fbad25f00d75187a883224d47e2d2e776c22bf9a
+
+ggplot(data=trips_joined, aes(hour_day) ) +
+  geom_freqpoly(bins = 24) +
+  xlim(0, 23) + 
+  theme_bw() + facet_grid(city ~ .)
+
+
+trip_times$trip_lenght
+
+p <- ggplot(trip_times, aes( time, hour(trip_times$day_time), color=group ))
+p + geom_line()  + theme(legend.position = "false")
+p + geom_point() + theme(legend.position = "bottom") + facet_grid(city ~ .)
+
+p <- ggplot(trip_times[], aes( time, trip_length, color=group ))
+p + geom_point() 
+
+hist(as.numeric(trip_times$trip_length),breaks = 300)
+
+myfdf <- data.frame(trips_joined$trip_length, trips_joined$trip_start, trips_joined$trip_stop)
+names(myfdf) <- c
+myfdf <- myfdf[]
 
 
 
-
-
-
-
-
-
-df <- data.frame(dose=c("D0.5", "D1", "D2"),
-                 len=c(4.2, 10, 29.5))
-head(df)
-
-ggplot(data=df, aes(x=dose, y=len, group=1)) +
-  geom_line() +
-  geom_point()
+head(trip_times$day_time)
+hour(trip_times$day_time)

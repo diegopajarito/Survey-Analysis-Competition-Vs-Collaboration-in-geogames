@@ -12,6 +12,7 @@ library(ggplot2)
 
 table_participants = read.csv('data/Cyclist_Experiment.csv')
 table_trips = read.csv('data/Cyclist_Trip.csv', sep = '\t')
+table_trips_length = read.csv('data/Cyclist_Trip_length.csv')
 table_answers = read.csv('data/Questionnaire_Answers.csv')
 trips_joined = merge(table_participants,table_trips)
 
@@ -63,13 +64,13 @@ p + geom_line() + xlim(0, 2500)
 p + geom_point() + theme(legend.position = 'bottom')
 
 
-=======
+
 # Basic line plot with points
 ggplot(data=trips_joined, aes(trip_length)) +
   geom_freqpoly() +
   xlim(1, 120) + xlab(x_label) + ylab(y_label) +
   theme_bw() + facet_grid(group ~ .)
->>>>>>> fbad25f00d75187a883224d47e2d2e776c22bf9a
+
 
 ggplot(data=trips_joined, aes(hour_day) ) +
   geom_freqpoly(bins = 24) +
@@ -86,7 +87,17 @@ p + geom_point() + theme(legend.position = "bottom") + facet_grid(city ~ .)
 p <- ggplot(trip_times[], aes( time, trip_length, color=group ))
 p + geom_point() 
 
+
+# trip length distance
 hist(as.numeric(trip_times$trip_length),breaks = 300)
+hist(table_trips_length$length_raw, breaks = 200)
+hist(table_trips_length$dif_length, breaks = 30)
+plot(table_trips_length$length_raw, table_trips_length$dif_length)
+
+pd <- ggplot(table_trips_length, aes(length_raw))
+pd + geom_histogram()
+
+
 
 myfdf <- data.frame(trips_joined$trip_length, trips_joined$trip_start, trips_joined$trip_stop)
 names(myfdf) <- c

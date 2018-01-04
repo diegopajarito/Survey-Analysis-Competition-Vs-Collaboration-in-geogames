@@ -9,38 +9,53 @@
 
 # Setup
 library(ggplot2)
+require(lubridate)
+library(dplyr)
 
-table_participants = read.csv('data/Cyclist_Experiment.csv')
-table_trips = read.csv('data/Cyclist_Trip.csv', sep = '\t')
-table_trips_length = read.csv('data/Cyclist_Trip_length.csv')
-table_answers = read.csv('data/Questionnaire_Answers.csv')
-trips_joined = merge(table_participants,table_trips)
+source("scripts/setup.R")
 
+# Estimation of times and length in time 
 trips_joined$day_time <-  format ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")
-<<<<<<< HEAD
 trips_joined$day_time <- strptime(trips_joined$day_time, format = "%H:%M:%OS")
-
-trips_joined$hour_day <- hour(trips_joined$day_time) + minute(trips_joined$day_time) / demo
+trips_joined$hour_day <- hour(trips_joined$day_time) + minute(trips_joined$day_time) / 60.0
 trips_joined$trip_length <- difftime( strptime(trips_joined$trip_stop, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), units='mins') 
 trips_joined$trip_start_experiment <- difftime ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trips_joined$questionnaire1, format= "%Y-%m-%dT%H:%M:%OS"), units='days') 
 trips_joined$trip_stop_experiment <- difftime( strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") , units='days')
 
-# Trip length in minutes 
-ggplot(trips_joined, aes(x=trip_length, color=group)) + 
-  geom_density() +
+# Classifying trips 
+trips_joined$validation <- "No Valid"
+trips_joined[which(trips_joined$trip_length >= 0.5 & trips_joined$trip_length <= 300.0),]$validation <- "Valid Time"
+trips_joined[which(!is.na(trips_joined$length_raw) & trips_joined$length_raw > 30),]$validation <- "Valid Distance"
+trips_joined[which(!is.na(trips_joined$length_raw) & trips_joined$length_raw > 30 & trips_joined$trip_length >= 0.5 & trips_joined$trip_length <= 300.0),]$validation <- "Valid"
+
+trips_valid <- data.frame(trips_joined$participant, trips_joined$city, trips_joined$device, trips_joined$group, trips_joined$trip_count, trips_joined$trip_start, 
+                          trips_joined$trip_stop, trips_joined$trip_length, trips_joined$length_raw, trips_joined$length_sim, trips_joined$dif_length,
+                          trips_joined$day_time, trips_joined$hour_day, trips_joined$trip_start_experiment, trips_joined$trip_stop_experiment, trips_joined$validation)
+names(trips_valid) <- c("participant", "city", "device", "group", "trip_count", "trip_star", "trip_stop", "trip_length", "length_raw", "length_sim", "dif_length", "day_time", "hour_day", 
+                        "trip_start_experiment", "trip_stop_experiment", "validation")
+trips_valid <- trips_valid[trips_valid$validation != "No Valid",]
+
+range(trips_valid[trips_valid$validation == "Valid",]$trip_length)
+
+# Distribution of Valid trips
+p_valid <- ggplot(trips_valid, aes (x=group, fill=group))
+p_valid + geom_histogram(stat = "count") + facet_grid(city ~ validation )
+
+
+# Trip length in minutes
+p_length_t <- ggplot(trips_valid[trips_valid$validation != "Valid Distance",], aes(x=trip_length, color=group)) 
+p_length_t + geom_density() +
   geom_rug(aes(x = trip_length, y = 0), position = position_jitter(height = 0)) +
   theme_bw() +
   theme(legend.position = "bottom")
-  
 
-trips_valid <- trips_joined[trips_joined$trip_length < 60 & trips_joined$trip_length >.5 & trips_joined$group != as.factor("none"),]
-ggplot(trips_valid, aes(x=trip_length, color=group)) + 
-  geom_histogram(aes(x = trip_length, y = ..density..),
+p_length_t + geom_histogram(aes(x = trip_length, y = ..density..),
                  binwidth = 1, fill = "white", color = "black") +
   geom_density(n=1028, bw=4.4) +
   theme_bw() +
   theme(legend.position = "bottom")
 
+# Comparison of density of trip length in minutes between groups 
 d_competition <- density(as.numeric(trips_valid[trips_valid$group == "Competition",]$trip_length), from = 0.5, to = 60, n=1028, bw=4.4)
 plot (d_competition)
 d_collaboration <- density(as.numeric(trips_valid[trips_valid$group == "Collaboration",]$trip_length), from = 0.5, to = 60, n=1028, bw=4.4)
@@ -48,11 +63,46 @@ plot (d_collaboration)
 
 plot(d_competition$y/d_collaboration$y, type="l")
 plot(d_competition$x/d_collaboration$x, type="l")
-plot(d_competition$x/d_collaboration$x)
 delta_x = d_competition$x - d_collaboration$x
 range (trips_valid$trip_length)
 range (trips_valid[trips_valid$group == "Competition",]$trip_length)
 range (trips_valid[trips_valid$group == "Collaboration",]$trip_length)
+
+
+
+
+# Trip length in meters
+p_length_d <- ggplot(trips_valid[trips_valid$validation != "Valid Time",], aes(length_raw, color=group)) 
+p_length_d + geom_histogram(binwidth = 500) + xlim(c(0,10000))
+
+p_length_d + geom_density() +
+  geom_rug(aes(x = trip_length, y = 0), position = position_jitter(height = 0)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+p_length_d + geom_density() + theme(legend.position = "bottom")
+
+p_length_d + geom_histogram(aes(x = length_raw, y = ..density..),
+                            binwidth = 500, fill = "white", color = "black") +
+  geom_density() +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+# Comparison of density of trip length in minutes between groups 
+range(as.numeric(trips_valid[trips_valid$group == "Competition" & trips_valid$validation != "Valid Time",]$length_raw))
+d_competition <- density(as.numeric(trips_valid[trips_valid$group == "Competition" & trips_valid$validation != "Valid Time",]$length_raw))
+plot (d_competition)
+d_collaboration <- density(as.numeric(trips_valid[trips_valid$group == "Collaboration" & trips_valid$validation != "Valid Time",]$length_raw))
+plot (d_collaboration)
+
+plot(d_competition$y/d_collaboration$y, type="l")
+plot(d_competition$x/d_collaboration$x, type="l")
+delta_x = d_competition$x - d_collaboration$x
+range (trips_valid$trip_length)
+range (trips_valid[trips_valid$group == "Competition",]$trip_length)
+range (trips_valid[trips_valid$group == "Collaboration",]$trip_length)
+
+
 
 
 # grouping
@@ -63,7 +113,7 @@ summarize(groups_, mean = mean(trip_length), n = n() )
 
 trip_start = data.frame(trips_joined$city, trips_joined$device, trips_joined$group, trips_joined$trip_count, trips_joined$day_time, trips_joined$trip_start_experiment, trips_joined$trip_length)
 names(trip_start) <- c("city", "device", "group", "trip_count", "day_time", "time", "trip_length")
-=======
+
 trips_joined$trip_start <- difftime( strptime(as.character(trips_joined$trip_start), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") ) 
 trips_joined$trip_stop <- difftime( strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") )
 
@@ -72,7 +122,7 @@ trips_joined$trip_stop <- difftime( strptime(as.character(trips_joined$trip_stop
 
 trip_start = data.frame(trips_joined$city, trips_joined$device, trips_joined$trip_count, trips_joined$day_time, trips_joined$trip_start)
 names(trip_start) <- c("city", "device", "trip_count", "day_time", "time")
->>>>>>> 21ba3572f7c5f535db8593acc1e9919138ae27be
+
 trip_start$time_type <- "start"
 trip_stop = data.frame(trips_joined$city, trips_joined$device, trips_joined$trip_count, trips_joined$day_time, trips_joined$trip_stop)
 names(trip_stop) <- c("city", "device", "trip_count", "day_time", "time")

@@ -13,6 +13,8 @@ library(Hmisc)
 library(effsize)
 
 # Setup 
+source("scripts/setup.R")
+
 # Set ggplot defaults & Custom colors 
 themeMod <- theme_bw() + 
   theme(legend.position = "none", axis.text.y = element_text(hjust = 1))
@@ -22,62 +24,63 @@ myFill <- function(...){
 }
 scale_fill_discrete <- myFill
 # Data reading and group asignation based on the answers
-table_answers <- read.csv('data/Questionnaire_Answers.csv')
-table_answers$group <- ifelse( !is.na(table_answers$competition_1) , "Competition", ifelse(!is.na(table_answers$collaboration_1), "Collaboration", NA))
-table_answers <- table_answers[!is.na(table_answers$group),]
+table_answers <- table_answers[table_answers$group != "none",]
 
 
 # Un-paired test
-# Satisfaction with cycling after the experiment - Comparison between groups collaboration / competitition
-shapiro.test(table_answers$satisfaction_cycling)
-satisfaction <- data.frame(table_answers$Participant, table_answers$City, table_answers$group, table_answers$satisfaction_cycling, table_answers$satisfaction_1)
-names(satisfaction) <- c("participant", "city", "group", "s_cycling", "s_during_experiment")
+# Satisfaction with during the experiment. Comparison between groups using the collaboration-based / competitition-based version of the app
+# Q1: “I ejoyed collaborating with / competing against other cyclists”
 
-satisfaction_competition <- satisfaction[satisfaction$group == "Competition",]
-satisfaction_collaboration <- satisfaction[satisfaction$group == "Collaboration",]
+enjoyment <- data.frame(table_answers$participant, table_answers$City, table_answers$group, table_answers$collaboration_1, table_answers$competition_1)
+names(enjoyment) <- c("participant", "city", "group", "e_collaboration", "e_competition")
+enjoyment$enj_functionality <- NA
+enjoyment[enjoyment$group == "Collaboration",]$enj_functionality <- enjoyment[enjoyment$group == "Collaboration",]$e_collaboration
+enjoyment[enjoyment$group == "Competition",]$enj_functionality <- enjoyment[enjoyment$group == "Competition",]$e_competition
+enjoyment_collaboration <- enjoyment[enjoyment$group == "Collaboration",]
+enjoyment_competition <- enjoyment[enjoyment$group == "Competition",]
+enjoyment_group <- rbind(enjoyment_collaboration, enjoyment_competition)
+
+
+# Normality Test
+shapiro.test(enjoyment_collaboration$enj_functionality)
+shapiro.test(enjoyment_competition$enj_functionality)
 
 #Variance Test
-fligner.test(satisfaction_competition$s_cycling, satisfaction_collaboration$s_cycling)
+fligner.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality)
 
-# Summarize data by groups
-satisfaction %>%                         # "Start with the data set we imported, d 
-  group_by(group) %>%                           # Then group d by IV 
-  summarise(N = length(s_during_experiment),      # Then summarize each group
-            Mean = mean(s_during_experiment),
-            SD = sd(s_during_experiment),
-            SE = SD/sqrt(N)) 
 # T Test
-t.test(satisfaction_competition$s_cycling, satisfaction_collaboration$s_cycling ) 
-t.test(satisfaction_competition$s_during_experiment, satisfaction_collaboration$s_during_experiment ) 
+t.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality) 
 
 # Effect size - Cohen's effect size
-cohen.d(satisfaction_competition$s_cycling, satisfaction_collaboration$s_cycling)
-cohen.d(satisfaction_competition$s_during_experiment, satisfaction_collaboration$s_during_experiment)
+cohen.d(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality)
 
+# Wilcox Test
+wilcox.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality)
 
 # Boxplot  
-p_cycling <- ggplot(data = satisfaction, aes(y = s_cycling, x = group, fill = group)) 
-p_during_experiment <- ggplot(data = satisfaction, aes(y = s_during_experiment, x = group, fill = group)) 
+p_experiment <- ggplot(data = enjoyment, aes(x = group, y = enj_functionality)) 
+p_experiment + geom_boxplot()   
+p_experiment + geom_boxplot() + facet_grid(. ~ city)
 
-p_cycling + stat_summary(fun.y = "mean", geom = "bar")  
-p_during_experiment + stat_summary(fun.y = "mean", geom = "bar")  
+# Removing Outliers
+out_collaboration <- boxplot.stats(enjoyment_collaboration$enj_functionality)$out
+enjoyment_collaboration$enj_functionality <- ifelse(enjoyment_collaboration$enj_functionality %in% out_collaboration, NA, enjoyment_collaboration$enj_functionality)
+out_competition <- boxplot.stats(enjoyment_competition$enj_functionality)$out
+enjoyment_competition$enj_functionality <- ifelse(enjoyment_competition$enj_functionality %in% out_competition, NA, enjoyment_competition$enj_functionality)
+enjoyment_group <- rbind(enjoyment_collaboration, enjoyment_competition)
 
-# Barplot of the means of the two groups and the Error bars
-p_cycling + stat_summary(fun.y = "mean", geom = "bar") +
-  stat_summary(fun.data = "mean_cl_normal", 
-               geom = "errorbar", 
-               width = 0.1) 
-p_during_experiment + stat_summary(fun.y = "mean", geom = "bar") +
-  stat_summary(fun.data = "mean_cl_normal", 
-               geom = "errorbar", 
-               width = 0.1) 
+# Wilcox Test without outliers
+wilcox.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality)
+wilcox.test(enjoyment_collaboration[enjoyment_collaboration$city == "Castelló",]$enj_functionality, enjoyment_competition[enjoyment_competition$city == "Castelló",]$enj_functionality)
+wilcox.test(enjoyment_collaboration[enjoyment_collaboration$city == "Malta",]$enj_functionality, enjoyment_competition[enjoyment_competition$city == "Malta",]$enj_functionality)
+wilcox.test(enjoyment_collaboration[enjoyment_collaboration$city == "Münster",]$enj_functionality, enjoyment_competition[enjoyment_competition$city == "Münster",]$enj_functionality)
 
-# Boxplot comparizon of the two groups
-p_cycling + geom_boxplot() 
-p_during_experiment + geom_boxplot() 
+# Boxplot without outliers
+p_experiment <- ggplot(data = enjoyment_group, aes(x= group, y = enj_functionality ))
+p_experiment + geom_boxplot()  
+p_experiment + geom_boxplot() + facet_grid(. ~ city)
 
-p_cycling + geom_boxplot() + facet_grid(. ~ city)
-p_during_experiment + geom_boxplot() + facet_grid(. ~ city)
+
 
 
 

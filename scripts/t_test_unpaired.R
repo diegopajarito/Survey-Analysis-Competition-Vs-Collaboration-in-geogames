@@ -28,7 +28,7 @@ table_answers <- table_answers[table_answers$group != "none",]
 
 
 # Un-paired test
-# Satisfaction with during the experiment. Comparison between groups using the collaboration-based / competitition-based version of the app
+# Satisfaction with cycling during the experiment. Comparison between groups using the collaboration-based / competitition-based version of the app
 # Q1: “I ejoyed collaborating with / competing against other cyclists”
 
 enjoyment <- data.frame(table_answers$participant, table_answers$City, table_answers$group, table_answers$collaboration_1, table_answers$competition_1)
@@ -52,14 +52,14 @@ fligner.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$en
 t.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality) 
 
 # Effect size - Cohen's effect size
-cohen.d(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality)
+cohen.d(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality, na.rm = TRUE)
 
 # Wilcox Test
 wilcox.test(enjoyment_collaboration$enj_functionality, enjoyment_competition$enj_functionality)
 
 # Boxplot  
 p_experiment <- ggplot(data = enjoyment, aes(x = group, y = enj_functionality)) 
-p_experiment + geom_boxplot()   
+p_experiment + geom_boxplot()
 p_experiment + geom_boxplot() + facet_grid(. ~ city)
 
 # Removing Outliers
@@ -80,6 +80,54 @@ p_experiment <- ggplot(data = enjoyment_group, aes(x= group, y = enj_functionali
 p_experiment + geom_boxplot()  
 p_experiment + geom_boxplot() + facet_grid(. ~ city)
 
+
+
+
+
+# Un-paired test
+# Satisfaction during the experiment. Comparison between groups using the collaboration-based / competitition-based version of the app
+# Q1: “Indicate how satisfied / dissatisfied in general you were with: cycling during the experiment” / satisfaction_1
+satisfaction_experiment <- data.frame(table_answers$participant, table_answers$City, table_answers$group, table_answers$satisfaction_1)
+names(satisfaction_experiment) <- c("participant", "city", "group", "satisfaction_exp")
+satisfaction_experiment_collaboration <- satisfaction_experiment[satisfaction_experiment$group == "Collaboration",]
+satisfaction_experiment_competition <- satisfaction_experiment[satisfaction_experiment$group == "Competition",]
+
+# Normality Test
+shapiro.test(satisfaction_experiment_collaboration$satisfaction_exp)
+shapiro.test(satisfaction_experiment_competition$satisfaction_exp)
+
+#Variance Test
+fligner.test(satisfaction_experiment_collaboration$satisfaction_exp, satisfaction_experiment_competition$satisfaction_exp)
+
+# T Test
+t.test(satisfaction_experiment_collaboration$satisfaction_exp, satisfaction_experiment_competition$satisfaction_exp)
+
+# Effect size - Cohen's effect size
+cohen.d(satisfaction_experiment_collaboration$satisfaction_exp, satisfaction_experiment_competition$satisfaction_exp)
+
+# Wilcox Test
+wilcox.test(satisfaction_experiment_collaboration$satisfaction_exp, satisfaction_experiment_competition$satisfaction_exp)
+
+# Boxplot  
+p_experiment <- ggplot(data = satisfaction_experiment, aes(x = group, y = satisfaction_exp)) 
+p_experiment + geom_boxplot()
+
+# Removing Outliers
+out_collaboration <- boxplot.stats(satisfaction_experiment_collaboration$satisfaction_exp)$out
+satisfaction_experiment_collaboration$satisfaction_exp <- ifelse(satisfaction_experiment_collaboration$satisfaction_exp %in% out_collaboration, NA, satisfaction_experiment_collaboration$satisfaction_exp)
+out_competition <- boxplot.stats(satisfaction_experiment_competition$satisfaction_exp)$out
+satisfaction_experiment_competition$satisfaction_exp <- ifelse(satisfaction_experiment_competition$satisfaction_exp %in% out_competition, NA, satisfaction_experiment_competition$satisfaction_exp)
+satisfaction_experiment <- rbind(satisfaction_experiment_collaboration, satisfaction_experiment_competition)
+
+# Wilcox Test without outliers
+wilcox.test(satisfaction_experiment_collaboration$satisfaction_exp, satisfaction_experiment_competition$satisfaction_exp)
+
+# Effect size - Cohen's effect size
+cohen.d(satisfaction_experiment_collaboration$satisfaction_exp, satisfaction_experiment_competition$satisfaction_exp, na.rm = TRUE)
+
+# Boxplot  
+p_experiment <- ggplot(data = satisfaction_experiment, aes(x = group, y = satisfaction_exp)) 
+p_experiment + geom_boxplot()
 
 
 
@@ -144,69 +192,6 @@ p_engagement + geom_boxplot() + facet_grid(. ~ city)
 
 
 
-
-
-
-
-# Un-paired test
-# Satisfaction with cycling / Satisfaction during the experiment - Comparison between groups
-
-satisfaction_comparison <- data.frame(table_answers$Participant, table_answers$City, table_answers$group, table_answers$satisfaction_cycling, table_answers$satisfaction_app_1)
-names(satisfaction_comparison) <- c("participant", "city", "group", "satisfaction_cycling", "satisfaction_exp")
-satisfaction_general <- data.frame(table_answers$Participant, table_answers$City, table_answers$group, table_answers$satisfaction_cycling)
-names(satisfaction_general) <- c("participant", "city", "group", "satisfaction")
-satisfaction_general$context <- "general"
-satisfaction_experiment <- data.frame(table_answers$Participant, table_answers$City, table_answers$group, table_answers$satisfaction_app_1)
-names(satisfaction_experiment) <- c("participant", "city", "group", "satisfaction")
-satisfaction_experiment$context <- "experiment"
-
-satisfaction_context_cc <- rbind(satisfaction_general, satisfaction_experiment)
-
-satisfaction_comparison_competition <- satisfaction_comparison[satisfaction_comparison$group == "Competition",]
-satisfaction_comparison_collaboration <- satisfaction_comparison[satisfaction_comparison$group == "Collaboration",]
-
-
-satisfaction_comparison_cc <- rbind(satisfaction_competition, satisfaction_competition)
-
-#Variance Test
-fligner.test(satisfaction_comparison$enjoyment_1, enjoyment_collaboration$enjoyment_1)
-
-
-
-# T Test
-t.test(satisfaction_comparison$satisfaction_cycling, satisfaction_comparison$satisfaction_exp)
-t.test(enjoyment_competition[enjoyment_competition$city == "Castelló",]$enjoyment_1, 
-       enjoyment_collaboration[enjoyment_collaboration$city == "Castelló",]$enjoyment_1)
-t.test(enjoyment_competition[enjoyment_competition$city == "Malta",]$enjoyment_1, 
-       enjoyment_collaboration[enjoyment_collaboration$city == "Malta",]$enjoyment_1)
-t.test(enjoyment_competition[enjoyment_competition$city == "Münster",]$enjoyment_1, 
-       enjoyment_collaboration[enjoyment_collaboration$city == "Münster",]$enjoyment_1)
-t.test(satisfaction_comparison_competition$satisfaction_cycling, satisfaction_comparison_competition$satisfaction_exp)
-t.test(satisfaction_comparison_collaboration$satisfaction_cycling, satisfaction_comparison_collaboration$satisfaction_exp)
-
-# Effect size - Cohen's effect size
-cohen.d(satisfaction_comparison$satisfaction_cycling, satisfaction_comparison$satisfaction_exp)
-
-cohen.d(satisfaction_comparison_competition$satisfaction_cycling, satisfaction_comparison_competition$satisfaction_exp)
-cohen.d(satisfaction_comparison_collaboration$satisfaction_cycling, satisfaction_comparison_collaboration$satisfaction_exp) 
-
-# Boxplot  
-p_satisfaction_ex_1 <- ggplot(data = satisfaction_context_cc, aes(y = satisfaction, x = context, fill = context)) 
-
-p_satisfaction_ex_1 + stat_summary(fun.y = "mean", geom = "bar")  
-
-# Barplot of the means of the two groups and the Error bars
-p_satisfaction_ex_1 + stat_summary(fun.y = "mean", geom = "bar") +
-  stat_summary(fun.data = "mean_cl_normal", 
-               geom = "errorbar", 
-               width = 0.1) 
-# Boxplot comparizon of the two groups
-p_satisfaction_ex_1 + geom_boxplot() 
-
-
-p_satisfaction_ex_1 + geom_boxplot() + facet_grid(. ~ city)
-p_enjoyment_2 + geom_boxplot() + facet_grid(. ~ city)
-p_enjoyment_3 + geom_boxplot() + facet_grid(. ~ city)
 
 
 

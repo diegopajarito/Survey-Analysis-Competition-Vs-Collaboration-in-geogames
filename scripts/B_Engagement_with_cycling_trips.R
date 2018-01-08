@@ -38,19 +38,16 @@ trips_valid <- trips_valid[trips_valid$validation != "No Valid",]
 range(trips_valid[trips_valid$validation == "Valid",]$trip_length)
 
 # Distribution of Valid trips
-p_valid <- ggplot(trips_valid, aes (x=group, fill=group))
-p_valid + geom_histogram(stat = "count") + facet_grid(city ~ validation )
-
+p_valid <- ggplot(trips_valid, aes (x=city, fill=validation))
+p_valid + geom_histogram(stat = "count") + theme(legend.position = "bottom")
 
 # Trip length in minutes
-p_length_t <- ggplot(trips_valid[trips_valid$validation != "Valid Distance",], aes(x=trip_length, color=group)) 
-p_length_t + geom_density() +
-  geom_rug(aes(x = trip_length, y = 0), position = position_jitter(height = 0)) +
-  theme_bw() +
-  theme(legend.position = "bottom")
+trips_time <- trips_valid[trips_valid$validation == "Valid Time" | trips_valid$validation == "Valid" & trips_valid$group != "none",]
+p_length_t <- ggplot(trips_distance, aes(x=trip_length, color=group)) 
+p_length_t + geom_density() + theme(legend.position = "bottom") 
 
 p_length_t + geom_histogram(aes(x = trip_length, y = ..density..),
-                 binwidth = 1, fill = "white", color = "black") +
+                 binwidth = 4.4, fill = "white", color = "black", xlim = c(0,60)) +
   geom_density(n=1028, bw=4.4) +
   theme_bw() +
   theme(legend.position = "bottom")

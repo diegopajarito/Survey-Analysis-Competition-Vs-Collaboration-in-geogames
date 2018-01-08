@@ -10,6 +10,8 @@ library(dplyr)
 library(knitr)
 library(ggplot2)
 library(Hmisc)
+library(effsize)
+
 
 # Setup 
 source("scripts/setup.R")
@@ -93,7 +95,7 @@ p_sat_cyc + geom_boxplot() + facet_grid(. ~ city)
 
 # Paired test
 # Satisfaction with cycling before and after - Comparison between groups collaboration / competitition
-# Q1: “I would find cycling enjoyable”
+# Q1: “I would find cycling enjoyable” / profile_cycling_1 / satisfaction_cycling
 satisfaction_before <- data.frame(table_answers$participant, table_answers$City, table_answers$group, table_answers$profile_cycling_1)
 names(satisfaction_before) <- c("participant", "city", "group", "satisfaction")
 satisfaction_before$time <- "Before"
@@ -103,11 +105,11 @@ satisfaction_after$time <- "After"
 answers_satisfaction_paired <- rbind(satisfaction_before, satisfaction_after)
 
 satisfaction_competition <- answers_satisfaction_paired[answers_satisfaction_paired$group == "Competition",]
-satisfaction_competition_before <- answers_satisfaction_competition[answers_satisfaction_competition$time == "Before",]
-satisfaction_competition_after <- answers_satisfaction_competition[answers_satisfaction_competition$time == "After",]
+satisfaction_competition_before <- satisfaction_before[satisfaction_before$group == "Competition",]
+satisfaction_competition_after <- satisfaction_after[satisfaction_after$group == "Competition",]
 satisfaction_collaboration <- answers_satisfaction_paired[answers_satisfaction_paired$group == "Collaboration",]
-satisfaction_collaboration_before <- answers_satisfaction_collaboration[answers_satisfaction_collaboration$time == "Before",]
-satisfaction_collaboration_after <- answers_satisfaction_collaboration[answers_satisfaction_collaboration$time == "After",]
+satisfaction_collaboration_before <- satisfaction_before[satisfaction_before$group == "Collaboration",]
+satisfaction_collaboration_after <- satisfaction_after[satisfaction_after$group == "Collaboration",]
 
 # Normality Test Shapiro-Wilk
 shapiro.test(satisfaction_before$satisfaction)
@@ -121,7 +123,7 @@ fligner.test(satisfaction_before$satisfaction, satisfaction_after$satisfaction)
 
 # T Test
 t.test(satisfaction_before$satisfaction, satisfaction_after$satisfaction ) 
-t.test(answers_satisfaction_competition_before$satisfaction, answers_satisfaction_competition_after$satisfaction ) 
+t.test(satisfaction_competition_before$satisfaction, satisfaction_competition_after$satisfaction ) 
 t.test(answers_satisfaction_competition_before[answers_satisfaction_competition_before$city=="Castelló",]$satisfaction, 
        answers_satisfaction_competition_after[answers_satisfaction_competition_after$city=="Castelló",]$satisfaction ) 
 t.test(answers_satisfaction_competition_before[answers_satisfaction_competition_before$city=="Malta",]$satisfaction, 
@@ -136,6 +138,9 @@ t.test(answers_satisfaction_collaboration_before[answers_satisfaction_collaborat
        answers_satisfaction_collaboration_after[answers_satisfaction_collaboration_after$city=="Malta",]$satisfaction)
 t.test(answers_satisfaction_collaboration_before[answers_satisfaction_collaboration_before$city=="Münster",]$satisfaction, 
        answers_satisfaction_collaboration_after[answers_satisfaction_collaboration_after$city=="Münster",]$satisfaction)
+
+# Effect size - Cohen's effect size
+cohen.d(satisfaction_before$satisfaction, satisfaction_after$satisfaction, na.rm = TRUE)
 
 # Wilcox Test
 wilcox.test(satisfaction_before$satisfaction, satisfaction_after$satisfaction)
@@ -175,7 +180,7 @@ p_satisfaction_ba + geom_boxplot()
 
 # Paired test
 # Engagement with cycling before and after - Comparison between groups collaboration / competitition
-# Q1: “My intention to use a bicycle is”
+# Q1: “My intention to use a bicycle is” / engagement_A1 / engagement_B1
 engagement_before <- data.frame(table_answers$participant, table_answers$City, table_answers$group, table_answers$engagement_A1)
 names(engagement_before) <- c("participant", "city", "group", "engagement")
 engagement_before$time <- "Before"
@@ -185,16 +190,18 @@ engagement_after$time <- "After"
 engagement_paired <- rbind(engagement_before, engagement_after)
 
 engagement_competition <- engagement_paired[engagement_paired$group == "Competition",]
-engagement_competition_before <- engagement_competition[engagement_competition$time == "Before",]
-engagement_competition_after <- engagement_competition[engagement_competition$time == "After",]
+engagement_competition_before <- engagement_before[engagement_before$group == "Competition",]
+engagement_competition_after <- engagement_after[engagement_after$group == "Competition",]
 engagement_collaboration <- engagement_paired[engagement_paired$group == "Collaboration",]
-engagement_collaboration_before <- engagement_collaboration[engagement_collaboration$time == "Before",]
-engagement_collaboration_after <- engagement_collaboration[engagement_collaboration$time == "After",]
+engagement_collaboration_before <- engagement_before[engagement_before$group == "Collaboration",]
+engagement_collaboration_after <- engagement_after[engagement_after$group == "Collaboration",]
 
 # Normality Test Shapiro-Wilk
 shapiro.test(engagement_before$engagement)
 shapiro.test(engagement_after$engagement)
 shapiro.test(engagement_competition_before$engagement)
+shapiro.test(engagement_competition_after$engagement)
+shapiro.test(engagement_collaboration_before$engagement)
 shapiro.test(engagement_collaboration_after$engagement)
 
 # Variance Test
@@ -218,6 +225,9 @@ t.test(engagement_collaboration_before[engagement_collaboration_before$city == "
 t.test(engagement_collaboration_before[engagement_collaboration_before$city == "Münster",]$engagement, 
        engagement_collaboration_after[engagement_collaboration_after$city == "Münster",]$engagement)
 
+# Effect size - Cohen's effect size
+cohen.d(engagement_before$engagement, engagement_after$engagement, na.rm = TRUE)
+
 # Wilcox Test
 wilcox.test(engagement_before$engagement, engagement_after$engagement)
 wilcox.test(engagement_collaboration_before$engagement, engagement_collaboration_after$engagement)
@@ -226,9 +236,6 @@ wilcox.test(engagement_competition_before$engagement, engagement_competition_aft
 # Boxplot  
 p_engagement <- ggplot(data = engagement_paired, aes(y = engagement, x = time)) 
 p_engagement + geom_boxplot()
-
-# Boxplot comparizon of the two groups
-
 
 # Removing Outliers
 out_before <- boxplot.stats(engagement_before$engagement)$out

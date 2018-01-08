@@ -133,6 +133,14 @@ p_experiment + geom_boxplot()
 
 
 
+
+
+
+
+
+
+
+
 # Un-paired test
 # Engagement with cycling after the experiment - Comparison between groups collaboration / competitition
 

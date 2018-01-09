@@ -14,7 +14,23 @@ library(dplyr)
 
 source("scripts/setup.R")
 
-# Estimation of times and length in time 
+# Descriptive anallysis of the number of location and trip records
+location_record <- data.frame(location_joined$participant, location_joined$device, location_joined$time_gps, location_joined$questionnaire1, location_joined$questionnaire_2,
+                              location_joined$application_install, location_joined$longitude, location_joined$latitude, location_joined$altitude, location_joined$precision,
+                              location_joined$city, location_joined$dem_gender, location_joined$dem_age, location_joined$group)
+names(location_record) <- c("participant", "device", "time_gps", "questionnaire_1", "questionnaire_2", "application_install", "longitude", "latitude", "altitude", "precision",
+                            "city", "gender", "age", "group")
+location_count <- count(location_record, by=(device))
+mean(location_count$n)
+
+
+p_location <- ggplot(location_count, aes(x=reorder(by,n), y=n))
+p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$n)) + coord_flip()
+
+
+
+
+ # Estimation of times and length in time 
 trips_joined$day_time <-  format ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")
 trips_joined$day_time <- strptime(trips_joined$day_time, format = "%H:%M:%OS")
 trips_joined$hour_day <- hour(trips_joined$day_time) + minute(trips_joined$day_time) / 60.0

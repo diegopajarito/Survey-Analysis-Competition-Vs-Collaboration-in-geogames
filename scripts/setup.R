@@ -10,6 +10,7 @@
 
 table_participants = read.csv('data/Cyclist_Experiment.csv')
 table_trips = read.csv('data/Cyclist_Trip.csv', sep = '\t')
+table_location = read.csv('data/Cyclist_Location.csv', sep = '\t')
 table_trips_length = read.csv('data/Cyclist_Trip_length.csv')
 table_answers = read.csv('data/Questionnaire_Answers.csv')
 table_answers$group <- "none"
@@ -18,4 +19,6 @@ table_answers[which(table_answers$collaboration_1 >= -3),]$group <- "Collaborati
 trips_joined <- merge(table_trips, table_participants)
 trips_joined <- merge(trips_joined, table_trips_length, all.x = TRUE)
 trips_joined <- merge(trips_joined, table_answers)
-  
+location_joined <- merge(table_location, table_participants, all.y = TRUE)
+location_joined <- merge (location_joined, table_answers, all.x = TRUE)
+

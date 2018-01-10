@@ -20,14 +20,22 @@ location_record <- data.frame(location_joined$participant, location_joined$devic
                               location_joined$city, location_joined$dem_gender, location_joined$dem_age, location_joined$group)
 names(location_record) <- c("participant", "device", "time_gps", "questionnaire_1", "questionnaire_2", "application_install", "longitude", "latitude", "altitude", "precision",
                             "city", "gender", "age", "group")
-location_count <- count(location_record, by=(device))
-mean(location_count$n)
+location_count <- data.frame(table(location_record$participant, location_record$device, location_record$city, location_record$group, location_record$gender, location_record$age))
+names(location_count) <- c("participant", "device", "city", "group", "gender", "age", "count")
+location_count <- location_count[which(location_count$count>0),]
+mean(location_count$count)
 
+p_location <- ggplot(location_count, aes(x=reorder(participant,count), y=count, fill=city))
+p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$count)) + coord_flip()
 
-p_location <- ggplot(location_count, aes(x=reorder(by,n), y=n))
-p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$n)) + coord_flip()
+trip_record <- data.frame(trips_joined$participant, trips_joined$device, trips_joined$city, trips_joined$group)
+names(trip_record) <- c("participant", "device", "city", "group")
+trips_count <- data.frame(table(trip_record$participant, trip_record$device, trip_record$city, trip_record$group))
+names(trips_count) <- c("participant", "device", "city", "group", "count")
+trips_count <- trips_count[which(trips_count$count>0),]
 
-
+p_trips <- ggplot(trips_count, aes(x=reorder(participant,count), y=count, fill=city))
+p_trips + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(trips_count$count)) + coord_flip()
 
 
  # Estimation of times and length in time 

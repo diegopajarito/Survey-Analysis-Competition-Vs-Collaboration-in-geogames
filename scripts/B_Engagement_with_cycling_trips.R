@@ -25,7 +25,6 @@ names(location_count) <- c("participant", "device", "city", "group", "gender", "
 location_count <- location_count[which(location_count$count>0),]
 mean(location_count$count)
 
-<<<<<<< HEAD
 p_location <- ggplot(location_count, aes(x=reorder(participant,count), y=count, fill=city))
 p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$count)) + coord_flip()
 
@@ -37,13 +36,20 @@ trips_count <- trips_count[which(trips_count$count>0),]
 
 p_trips <- ggplot(trips_count, aes(x=reorder(participant,count), y=count, fill=city))
 p_trips + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(trips_count$count)) + coord_flip()
-=======
+
 p_location <- ggplot(location_count, aes(x=reorder(device,count), y=count, fill=city))
 p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$count)) + coord_flip()
 
 
->>>>>>> 6eff7999486ee2518bee4d8d92f172e35d6321b4
+trip_count_joined <- merge(trips_count, location_count, by =c("participant", "device", "city", "group")) 
+names(trip_count_joined) <- c("participant", "device", "city", "group", "trips", "gender", "age", "points")
+trip_count_joined$points_per_trip <- trip_count_joined$points / trip_count_joined$trips
 
+p_trip_ratio <- ggplot(trip_count_joined, aes(x=reorder(participant,points_per_trip), y=points_per_trip, fill=city))
+p_trip_ratio + geom_bar(stat = 'identity') + coord_flip()
+
+sum(location_count$count)
+sum(trips_count$count)
 
  # Estimation of times and length in time 
 trips_joined$day_time <-  format ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")

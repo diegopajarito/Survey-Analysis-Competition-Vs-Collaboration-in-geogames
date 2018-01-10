@@ -25,6 +25,7 @@ names(location_count) <- c("participant", "device", "city", "group", "gender", "
 location_count <- location_count[which(location_count$count>0),]
 mean(location_count$count)
 
+<<<<<<< HEAD
 p_location <- ggplot(location_count, aes(x=reorder(participant,count), y=count, fill=city))
 p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$count)) + coord_flip()
 
@@ -36,6 +37,12 @@ trips_count <- trips_count[which(trips_count$count>0),]
 
 p_trips <- ggplot(trips_count, aes(x=reorder(participant,count), y=count, fill=city))
 p_trips + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(trips_count$count)) + coord_flip()
+=======
+p_location <- ggplot(location_count, aes(x=reorder(device,count), y=count, fill=city))
+p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$count)) + coord_flip()
+
+
+>>>>>>> 6eff7999486ee2518bee4d8d92f172e35d6321b4
 
 
  # Estimation of times and length in time 

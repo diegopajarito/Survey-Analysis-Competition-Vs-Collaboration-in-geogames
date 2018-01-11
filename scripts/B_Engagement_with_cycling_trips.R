@@ -14,7 +14,7 @@ library(dplyr)
 
 source("scripts/setup.R")
 
-# Descriptive anallysis of the number of location and trip records
+# Location_record, a list of the gps points recorded by the application 
 location_record <- data.frame(location_joined$participant, location_joined$device, location_joined$time_gps, location_joined$questionnaire1, location_joined$questionnaire_2,
                               location_joined$application_install, location_joined$longitude, location_joined$latitude, location_joined$altitude, location_joined$precision,
                               location_joined$city, location_joined$dem_gender, location_joined$dem_age, location_joined$group)
@@ -25,16 +25,71 @@ names(location_count) <- c("participant", "device", "city", "group", "gender", "
 location_count <- location_count[which(location_count$count>0),]
 mean(location_count$count)
 
+# Trip_record, a list with the union of the trips recorded with the app and the estimations of distance and number of points coming from the location_record
+trip_record <- data.frame(trips_joined$participant, trips_joined$device, trips_joined$city, trips_joined$group, trips_joined$trip_count, trips_joined$point_count,
+                          trips_joined$trip_start, trips_joined$trip_stop, trips_joined$questionnaire1, trips_joined$questionnaire_2, trips_joined$length_raw, 
+                          trips_joined$length_sim, trips_joined$dif_length, trips_joined$dem_gender, trips_joined$dem_age)
+names(trip_record) <- c("participant", "device", "city", "group", "trip_count", "point_count", "trip_start", "trip_stop", "exper_start", "exper_end", "length_raw", 
+                        "length_sim", "dif_length", "gender", "age")
+
+
+# Estimation of some characteristics of the trips, hour of the day, time length in minutes, time referred to the start of the experiment
+trip_record$day_time <-  format ( strptime(trip_record$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")
+trip_record$day_time <- strptime(trip_record$day_time, format = "%H:%M:%OS")
+trip_record$hour_day <- hour(trip_record$day_time) + minute(trip_record$day_time) / 60.0
+trip_record$trip_length <- difftime( strptime(trip_record$trip_stop, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trip_record$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), units='mins') 
+trip_record$trip_start_experiment <- difftime ( strptime(trip_record$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trip_record$exper_start, format= "%Y-%m-%dT%H:%M:%OS"), units='days') 
+trip_record$trip_stop_experiment <- difftime( strptime(as.character(trip_record$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trip_record$exper_start), format= "%Y-%m-%dT%H:%M:%OS") , units='days')
+trip_record$trip_day_experiment <- round(trip_record$trip_start_experiment, digits = 0) + 1
+
+# Classifying trips according to their length in time and distance
+trip_record$validation <- "No Valid"
+trip_record[which(trip_record$trip_length >= 0.5 & trip_record$trip_length <= 300.0),]$validation <- "Valid Time"
+trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30),]$validation <- "Valid Distance"
+trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30 & trip_record$trip_length >= 0.5 & trip_record$trip_length <= 300.0),]$validation <- "Valid"
+trip_record$avg_speed = trip_record$length_raw/(as.numeric(trip_record$trip_length) /60)
+
+# 1 Why not valid?
+p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=trip_day_experiment, y=trip_count, color=city))
+p_trips_no_valid + geom_point() + theme(legend.position = "bottom")
+# Percentage of validation
+
+round(trip_record$trip_start_experiment, digits = 0) + 1
+# 2 What happen with distance?
+p_trips_valid <- ggplot(trip_record[trip_record$validation == "Valid" | trip_record$validation == "Valid Distance" ,], aes(x=, y=length_raw, fill=participant))
+p_trips_valid + geom_point() + theme(legend.position = "bottom") + geom_smooth()
+
+# 3 What happen with time?
+p_trips <- ggplot(trip_record, aes(x=validation, fill=city))
+p_trips + stat_count(stat = 'identity')
+p_trips + geom_point() + theme(legend.position = "bottom") + geom_smooth()
+
+# 4 all
+p_hist_all_trips <- ggplot(trip_record, aes(x=trip_day_experiment, fill=validation))
+p_hist_all_trips + stat_count(stat = 'count')
+
+
+210/793
+380/793
+240/293
+
+
+
+
 p_location <- ggplot(location_count, aes(x=reorder(participant,count), y=count, fill=city))
 p_location + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(location_count$count)) + coord_flip()
 
-trip_record <- data.frame(trips_joined$participant, trips_joined$device, trips_joined$city, trips_joined$group)
-names(trip_record) <- c("participant", "device", "city", "group")
+
 trips_count <- data.frame(table(trip_record$participant, trip_record$device, trip_record$city, trip_record$group))
 names(trips_count) <- c("participant", "device", "city", "group", "count")
 trips_count <- trips_count[which(trips_count$count>0),]
 
-p_trips <- ggplot(trips_count, aes(x=reorder(participant,count), y=count, fill=city))
+
+p_trips <- ggplot(trip_record, aes(x=length_raw, y=avg_speed, color=city))
+p_trips + geom_point() + theme(legend.position = "bottom") + geom_smooth()
+
+
+p_trips <- ggplot(trip_record, aes(x=reorder(trip_c,count), y=count, fill=city))
 p_trips + geom_bar(stat = 'identity') + geom_hline(yintercept = mean(trips_count$count)) + coord_flip()
 
 p_location <- ggplot(location_count, aes(x=reorder(device,count), y=count, fill=city))
@@ -51,19 +106,7 @@ p_trip_ratio + geom_bar(stat = 'identity') + coord_flip()
 sum(location_count$count)
 sum(trips_count$count)
 
- # Estimation of times and length in time 
-trips_joined$day_time <-  format ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), "%H:%M:%OS")
-trips_joined$day_time <- strptime(trips_joined$day_time, format = "%H:%M:%OS")
-trips_joined$hour_day <- hour(trips_joined$day_time) + minute(trips_joined$day_time) / 60.0
-trips_joined$trip_length <- difftime( strptime(trips_joined$trip_stop, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), units='mins') 
-trips_joined$trip_start_experiment <- difftime ( strptime(trips_joined$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trips_joined$questionnaire1, format= "%Y-%m-%dT%H:%M:%OS"), units='days') 
-trips_joined$trip_stop_experiment <- difftime( strptime(as.character(trips_joined$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trips_joined$questionnaire1), format= "%Y-%m-%dT%H:%M:%OS") , units='days')
 
-# Classifying trips 
-trips_joined$validation <- "No Valid"
-trips_joined[which(trips_joined$trip_length >= 0.5 & trips_joined$trip_length <= 300.0),]$validation <- "Valid Time"
-trips_joined[which(!is.na(trips_joined$length_raw) & trips_joined$length_raw > 30),]$validation <- "Valid Distance"
-trips_joined[which(!is.na(trips_joined$length_raw) & trips_joined$length_raw > 30 & trips_joined$trip_length >= 0.5 & trips_joined$trip_length <= 300.0),]$validation <- "Valid"
 
 trips_valid <- data.frame(trips_joined$participant, trips_joined$city, trips_joined$device, trips_joined$group, trips_joined$trip_count, trips_joined$trip_start, 
                           trips_joined$trip_stop, trips_joined$trip_length, trips_joined$length_raw, trips_joined$length_sim, trips_joined$dif_length,

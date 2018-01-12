@@ -28,9 +28,10 @@ mean(location_count$count)
 # Trip_record, a list with the union of the trips recorded with the app and the estimations of distance and number of points coming from the location_record
 trip_record <- data.frame(trips_joined$participant, trips_joined$device, trips_joined$city, trips_joined$group, trips_joined$trip_count, trips_joined$point_count,
                           trips_joined$trip_start, trips_joined$trip_stop, trips_joined$questionnaire1, trips_joined$questionnaire_2, trips_joined$length_raw, 
-                          trips_joined$length_sim, trips_joined$dif_length, trips_joined$dem_gender, trips_joined$dem_age)
+                          trips_joined$length_sim, trips_joined$dif_length, trips_joined$dem_gender, trips_joined$dem_age,
+                          trips_joined$gaming_mobile_time, trips_joined$gaming_app_cycling)
 names(trip_record) <- c("participant", "device", "city", "group", "trip_count", "point_count", "trip_start", "trip_stop", "exper_start", "exper_end", "length_raw", 
-                        "length_sim", "dif_length", "gender", "age")
+                        "length_sim", "dif_length", "gender", "age", "mobile_time", "app_cycling")
 
 
 # Estimation of some characteristics of the trips, hour of the day, time length in minutes, time referred to the start of the experiment
@@ -49,8 +50,9 @@ trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30),
 trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30 & trip_record$trip_length >= 0.5 & trip_record$trip_length <= 300.0),]$validation <- "Valid"
 trip_record$avg_speed = trip_record$length_raw/(as.numeric(trip_record$trip_length) /60)
 
-# 1 Why not valid?
-p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=trip_day_experiment, y=trip_count, color=city))
+# 1 Why not valid? all participans had failures / during all the period of the experiment but more during first day
+# Mostly in MS and more problemátic, but distribuited during the campaign
+p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=city, y=trip_day_experiment, color=city))
 p_trips_no_valid + geom_point() + theme(legend.position = "bottom")
 # Percentage of validation
 
@@ -65,8 +67,8 @@ p_trips + stat_count(stat = 'identity')
 p_trips + geom_point() + theme(legend.position = "bottom") + geom_smooth()
 
 # 4 all
-p_hist_all_trips <- ggplot(trip_record, aes(x=trip_day_experiment, fill=validation))
-p_hist_all_trips + stat_count(stat = 'count')
+p_hist_all_trips <- ggplot(trip_record, aes(x=app_cycling))
+p_hist_all_trips + stat_count(stat = 'count') + facet_grid(validation ~ gender)
 
 
 210/793

@@ -71,6 +71,10 @@ p_hist_all_trips <- ggplot(trip_record, aes(x=app_cycling))
 p_hist_all_trips + stat_count(stat = 'count') + facet_grid(validation ~ gender)
 
 
+ggplot(trip_record, aes(x=cite())) + geom_bar(stat = "mean") +  geom_text(stat='count',aes(label=..count..))
+mean(trip_record[!is.na(trip_record$length_raw),]$length_raw)
+mean(trip_record[trip_record$validation != "No Valid" & trip_record$validation != "Valid Distance",]$trip_length)
+
 210/793
 380/793
 240/293

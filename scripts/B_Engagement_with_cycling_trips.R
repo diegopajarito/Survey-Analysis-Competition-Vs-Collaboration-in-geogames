@@ -29,9 +29,9 @@ mean(location_count$count)
 trip_record <- data.frame(trips_joined$participant, trips_joined$device, trips_joined$city, trips_joined$group, trips_joined$trip_count, trips_joined$point_count,
                           trips_joined$trip_start, trips_joined$trip_stop, trips_joined$questionnaire1, trips_joined$questionnaire_2, trips_joined$length_raw, 
                           trips_joined$length_sim, trips_joined$dif_length, trips_joined$dem_gender, trips_joined$dem_age,
-                          trips_joined$gaming_mobile_time, trips_joined$gaming_app_cycling)
+                          trips_joined$gaming_mobile_time, trips_joined$gaming_app_cycling, trips_joined$feedback_1, trips_joined$feedback_4)
 names(trip_record) <- c("participant", "device", "city", "group", "trip_count", "point_count", "trip_start", "trip_stop", "exper_start", "exper_end", "length_raw", 
-                        "length_sim", "dif_length", "gender", "age", "mobile_time", "app_cycling")
+                        "length_sim", "dif_length", "gender", "age", "mobile_time", "app_cycling", "feedback_reminder", "feedback_function")
 
 
 # Estimation of some characteristics of the trips, hour of the day, time length in minutes, time referred to the start of the experiment
@@ -42,6 +42,7 @@ trip_record$trip_length <- difftime( strptime(trip_record$trip_stop, format= "%Y
 trip_record$trip_start_experiment <- difftime ( strptime(trip_record$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trip_record$exper_start, format= "%Y-%m-%dT%H:%M:%OS"), units='days') 
 trip_record$trip_stop_experiment <- difftime( strptime(as.character(trip_record$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trip_record$exper_start), format= "%Y-%m-%dT%H:%M:%OS") , units='days')
 trip_record$trip_day_experiment <- round(trip_record$trip_start_experiment, digits = 0) + 1
+trip_record$trip_week_experiment <- ceiling(trip_record$trip_day_experiment / 7)
 
 # Classifying trips according to their length in time and distance
 trip_record$validation <- "No Valid"
@@ -52,8 +53,8 @@ trip_record$avg_speed = trip_record$length_raw/(as.numeric(trip_record$trip_leng
 
 # 1 Why not valid? all participans had failures / during all the period of the experiment but more during first day
 # Mostly in MS and more problemátic, but distribuited during the campaign
-p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=city, y=trip_day_experiment, color=city))
-p_trips_no_valid + geom_point() + theme(legend.position = "bottom")
+p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=participant, fill=validation))
+p_trips_no_valid + geom_bar(stat = "count") + theme(legend.position = "bottom")
 # Percentage of validation
 
 round(trip_record$trip_start_experiment, digits = 0) + 1
@@ -67,18 +68,50 @@ p_trips + stat_count(stat = 'identity')
 p_trips + geom_point() + theme(legend.position = "bottom") + geom_smooth()
 
 # 4 all
-p_hist_all_trips <- ggplot(trip_record, aes(x=app_cycling))
-p_hist_all_trips + stat_count(stat = 'count') + facet_grid(validation ~ gender)
+p_hist_all_trips <- ggplot(trip_record, aes(x=feedback_remind))
+p_hist_all_trips + stat_count(width = 0.8) + geom_label(stat="count", aes(label=..count..),vjust=2) + 
+  theme(legend.position = "bottom") + theme_bw() 
 
+
++ facet_grid(. ~ trip_week_experiment)
+   
+
+ceiling(trip_record$trip_day_experiment / 10)
 
 ggplot(trip_record, aes(x=cite())) + geom_bar(stat = "mean") +  geom_text(stat='count',aes(label=..count..))
-mean(trip_record[!is.na(trip_record$length_raw),]$length_raw)
+mean(trip_record[!is.na(trip_record$length_raw),]$length_raw) + facet_grid(trip_week_experiment ~ .)
 mean(trip_record[trip_record$validation != "No Valid" & trip_record$validation != "Valid Distance",]$trip_length)
 
 210/793
 380/793
 240/293
 
+29/(9+44+91)
+36/(13+42+59)
+
+343 + 335 + 115
+343/793
+335/793
+115/793
+
+173 + 150 + 78
+173 / (173 + 150 + 78)
+150 / (173 + 150 + 78)
+78 / (173 + 150 + 78)
+
+111 + 71 + 33
+111 / (111 + 71 + 33)
+71 / (111 + 71 + 33)
+31 / (111 + 71 + 33)
+
+32 + 29 + 4
+
+(111 + 71 + 33 + 173 + 150 + 78 + 65) / 793
+
+204/793
+34/793
+347/793
+208/793
 
 
 

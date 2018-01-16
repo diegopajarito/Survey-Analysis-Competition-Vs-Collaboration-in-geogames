@@ -51,6 +51,55 @@ trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30),
 trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30 & trip_record$trip_length >= 0.5 & trip_record$trip_length <= 300.0),]$validation <- "Valid"
 trip_record$avg_speed = trip_record$length_raw/(as.numeric(trip_record$trip_length) /60)
 
+# Estimating the proportion of of valid trips per participant
+trip_validation_values <- data.frame(trip_record$participant, trip_record$city, trip_record$group, as.integer(trip_record$trip_week_experiment), trip_record$validation, trip_record$feedback_function, trip_record$feedback_reminder)
+names(trip_validation_values) <- c("participant", "city", "group", "week", "validation", "feedback_function", "feedback_reminder")
+trip_validation_count <- trip_validation_values %>%
+  group_by(participant, city, group) %>%
+  summarise(total_trips = n(),
+            trips_valid = sum(ifelse(validation == "Valid", 1, 0)),
+            trips_valid_time = sum(ifelse(validation == "Valid Time", 1, 0)),
+            trips_valid_distance = sum(ifelse(validation == "Valid Distance", 1, 0)),
+            trips_no_valid = sum(ifelse(validation == "No Valid", 1, 0)))
+sum(trip_validation_count$total_trips)
+mean(trip_validation_count$total_trips)
+trip_validation_count$proportion_valid = trip_validation_count$trips_no_valid / trip_validation_count$total_trips
+
+p_trips_valid <- ggplot(trip_validation_count, aes(x=reorder(participant, total_trips), y=total_trips, fill=city)) 
+p_trips_valid + geom_bar(stat = 'identity') + geom_point(aes(y=trips_no_valid)) +
+  geom_hline(yintercept = mean(trip_validation_count$total_trips), color="blue") +
+  theme(legend.position = "bottom", axis.text.x=element_blank())
+
+p_box_valid <- ggplot(trip_validation_count, aes(x=city, y=trips_valid_any))
+p_box_valid + geom_boxplot()
+
+
+
+trip_validation_first_week <- trip_validation_values[which(trip_validation_values$week < 3),]
+nrow(trip_validation_first_week[trip_validation_first_week$validation != "No Valid",])
+trip_validation_count_first_week <- trip_validation_first_week %>%
+  group_by(participant, city, group) %>%
+  summarise(total_trips = n(),
+            trips_valid = sum(ifelse(validation == "Valid", 1, 0)),
+            trips_valid_time = sum(ifelse(validation == "Valid Time", 1, 0)),
+            trips_valid_distance = sum(ifelse(validation == "Valid Distance", 1, 0)),
+            trips_no_valid = sum(ifelse(validation == "No Valid", 1, 0)))
+sum(trip_validation_count_first_week$total_trips)
+mean(trip_validation_count_first_week$total_trips)
+nrow(trip_validation_values[trip_validation_values$validation != "No Valid" & trip_validation_values$week < 3, ])
+mean(trip_validation_count_first_week$total_trips - trip_validation_count_first_week$trips_no_valid)
+trip_validation_count_first_week$proportion_valid = trip_validation_count_first_week$trips_no_valid / trip_validation_count_first_week$total_trips
+
+
+p_trips_valid_first_week <- ggplot(trip_validation_count_first_week, aes(x=reorder(participant, total_trips), y=total_trips, fill=city)) 
+p_trips_valid_first_week + geom_bar(stat = 'identity') + geom_point(aes(y=trips_no_valid)) +
+  geom_hline(yintercept = mean(trip_validation_count_first_week$total_trips), color="blue") +
+  theme(legend.position = "bottom", axis.text.x=element_blank())
+
+p_box_valid_first_week <- ggplot(trip_validation_count_first_week, aes(x=city, y=trips_valid))
+p_box_valid_first_week + geom_boxplot() 
+
+
 # 1 Why not valid? all participans had failures / during all the period of the experiment but more during first day
 # Mostly in MS and more problemátic, but distribuited during the campaign
 p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=participant, fill=validation))
@@ -68,12 +117,9 @@ p_trips + stat_count(stat = 'identity')
 p_trips + geom_point() + theme(legend.position = "bottom") + geom_smooth()
 
 # 4 all
-p_hist_all_trips <- ggplot(trip_record, aes(x=feedback_remind))
+p_hist_all_trips <- ggplot(trip_record, aes(x=city))
 p_hist_all_trips + stat_count(width = 0.8) + geom_label(stat="count", aes(label=..count..),vjust=2) + 
-  theme(legend.position = "bottom") + theme_bw() 
-
-
-+ facet_grid(. ~ trip_week_experiment)
+  theme(legend.position = "bottom") + theme_bw() + facet_grid(. ~ feedback_function)
    
 
 ceiling(trip_record$trip_day_experiment / 10)
@@ -112,6 +158,27 @@ mean(trip_record[trip_record$validation != "No Valid" & trip_record$validation !
 34/793
 347/793
 208/793
+
+
+
+values <- data.frame(value = c("a", "a", "a", "a", "a", 
+                               "b", "b", "b", 
+                               "c", "c", "c", "c"))
+nr.of.appearances <- aggregate(x = values, 
+                               by = list(unique.values = values$value), 
+                               FUN = length)
+
+ag_participants <- aggregate(x = trip_record, by = list(trip_record$participant), FUN = length)
+
+
+tab %>%
+  group_by(month, variable) %>%
+  summarise(a_sum=sum(amount),
+            a_mean=(mean(amount)))
+
+
+
+
 
 
 

@@ -13,6 +13,7 @@
 library(tm)
 library(SnowballC)
 library(wordcloud)
+library(ggplot2)
 
 table_participants = read.csv('data/Cyclist_Experiment.csv')
 table_tags <- read.csv('data/Cyclist_Tag.csv', sep = '\t')
@@ -102,4 +103,5 @@ ggplot(table_tags_polarity_joined[!is.na(table_tags_polarity_joined$city),], aes
   facet_grid(city ~ .) +
   theme(legend.position="bottom")
 
+ggplot(table_tags_polarity_joined, aes(x=sentiment_polarity)) + geom_bar(stat="count") + geom_label(stat="count", aes(label=..count..,vjust=2 ))
 

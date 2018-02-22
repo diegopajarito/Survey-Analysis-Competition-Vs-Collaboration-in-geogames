@@ -35,6 +35,26 @@ dev.off()
 
 
 # Graph number 2
+# Satisfaction with cycling / Cycling during the experiment 
+likert_labels_satisfaction <- c("Very dissatisfied (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Very satisfied (3)")
+satis_cycling_factor <- factor(table_answers$profile_cycling_1, likert_factors, labels = likert_labels_satisfaction)
+satis_cycling_during_ex_factor <- factor(table_answers$satisfaction_1, likert_factors, labels = likert_labels_satisfaction)
+satis_cycling_during_ex <- data.frame(satis_cycling_factor, satis_cycling_during_ex_factor)
+title <- "I found cycling enjoyable / Cycling during the experiment:"
+names(satis_cycling_during_ex) <- c("Before", "Experiment")
+satis_cycling_during_ex_likert <- likert(satis_cycling_during_ex)
+plot(satis_cycling_during_ex_likert) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title=NULL, nrow = 1))
+
+svg(filename="graphs/A_sastisfaction_graph2.svg", 
+    width=6.5, height=3, pointsize=10)
+plot(satis_cycling_during_ex_likert) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title=NULL, nrow = 1))
+dev.off()
+
+
+
+# Graph number 2
 # Satisfaction with cycling / Mobile App during the experiment 
 likert_labels_satisfaction <- c("Very dissatisfied (-3)","(-2)","(-1)","Neutral (0)","(1)","(2)","Very satisfied (3)")
 satis_cycling_during_ex_factor <- factor(table_answers$satisfaction_app_1, likert_factors, labels = likert_labels_satisfaction)

@@ -29,9 +29,9 @@ mean(location_count$count)
 trip_record <- data.frame(trips_joined$participant, trips_joined$device, trips_joined$city, trips_joined$group, trips_joined$trip_count, trips_joined$point_count,
                           trips_joined$trip_start, trips_joined$trip_stop, trips_joined$questionnaire1, trips_joined$questionnaire_2, trips_joined$length_raw, 
                           trips_joined$length_sim, trips_joined$dif_length, trips_joined$dem_gender, trips_joined$dem_age,
-                          trips_joined$gaming_mobile_time, trips_joined$gaming_app_cycling)
+                          trips_joined$gaming_mobile_time, trips_joined$gaming_app_cycling, trips_joined$feedback_1, trips_joined$feedback_4)
 names(trip_record) <- c("participant", "device", "city", "group", "trip_count", "point_count", "trip_start", "trip_stop", "exper_start", "exper_end", "length_raw", 
-                        "length_sim", "dif_length", "gender", "age", "mobile_time", "app_cycling")
+                        "length_sim", "dif_length", "gender", "age", "mobile_time", "app_cycling", "feedback_reminder", "feedback_function")
 
 
 # Estimation of some characteristics of the trips, hour of the day, time length in minutes, time referred to the start of the experiment
@@ -42,6 +42,7 @@ trip_record$trip_length <- difftime( strptime(trip_record$trip_stop, format= "%Y
 trip_record$trip_start_experiment <- difftime ( strptime(trip_record$trip_start, format= "%Y-%m-%dT%H:%M:%OS"), strptime(trip_record$exper_start, format= "%Y-%m-%dT%H:%M:%OS"), units='days') 
 trip_record$trip_stop_experiment <- difftime( strptime(as.character(trip_record$trip_stop), format= "%Y-%m-%dT%H:%M:%OS"), strptime(as.character(trip_record$exper_start), format= "%Y-%m-%dT%H:%M:%OS") , units='days')
 trip_record$trip_day_experiment <- round(trip_record$trip_start_experiment, digits = 0) + 1
+trip_record$trip_week_experiment <- ceiling(trip_record$trip_day_experiment / 7)
 
 # Classifying trips according to their length in time and distance
 trip_record$validation <- "No Valid"
@@ -50,10 +51,59 @@ trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30),
 trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30 & trip_record$trip_length >= 0.5 & trip_record$trip_length <= 300.0),]$validation <- "Valid"
 trip_record$avg_speed = trip_record$length_raw/(as.numeric(trip_record$trip_length) /60)
 
+# Estimating the proportion of of valid trips per participant
+trip_validation_values <- data.frame(trip_record$participant, trip_record$city, trip_record$group, as.integer(trip_record$trip_week_experiment), trip_record$validation, trip_record$feedback_function, trip_record$feedback_reminder)
+names(trip_validation_values) <- c("participant", "city", "group", "week", "validation", "feedback_function", "feedback_reminder")
+trip_validation_count <- trip_validation_values %>%
+  group_by(participant, city, group) %>%
+  summarise(total_trips = n(),
+            trips_valid = sum(ifelse(validation == "Valid", 1, 0)),
+            trips_valid_time = sum(ifelse(validation == "Valid Time", 1, 0)),
+            trips_valid_distance = sum(ifelse(validation == "Valid Distance", 1, 0)),
+            trips_no_valid = sum(ifelse(validation == "No Valid", 1, 0)))
+sum(trip_validation_count$total_trips)
+mean(trip_validation_count$total_trips)
+trip_validation_count$proportion_valid = trip_validation_count$trips_no_valid / trip_validation_count$total_trips
+
+p_trips_valid <- ggplot(trip_validation_count, aes(x=reorder(participant, total_trips), y=total_trips, fill=city)) 
+p_trips_valid + geom_bar(stat = 'identity') + geom_point(aes(y=trips_no_valid)) +
+  geom_hline(yintercept = mean(trip_validation_count$total_trips), color="blue") +
+  theme(legend.position = "bottom", axis.text.x=element_blank())
+
+p_box_valid <- ggplot(trip_validation_count, aes(x=city, y=trips_valid_any))
+p_box_valid + geom_boxplot()
+
+
+
+trip_validation_first_week <- trip_validation_values[which(trip_validation_values$week < 3),]
+nrow(trip_validation_first_week[trip_validation_first_week$validation != "No Valid",])
+trip_validation_count_first_week <- trip_validation_first_week %>%
+  group_by(participant, city, group) %>%
+  summarise(total_trips = n(),
+            trips_valid = sum(ifelse(validation == "Valid", 1, 0)),
+            trips_valid_time = sum(ifelse(validation == "Valid Time", 1, 0)),
+            trips_valid_distance = sum(ifelse(validation == "Valid Distance", 1, 0)),
+            trips_no_valid = sum(ifelse(validation == "No Valid", 1, 0)))
+sum(trip_validation_count_first_week$total_trips)
+mean(trip_validation_count_first_week$total_trips)
+nrow(trip_validation_values[trip_validation_values$validation != "No Valid" & trip_validation_values$week < 3, ])
+mean(trip_validation_count_first_week$total_trips - trip_validation_count_first_week$trips_no_valid)
+trip_validation_count_first_week$proportion_valid = trip_validation_count_first_week$trips_no_valid / trip_validation_count_first_week$total_trips
+
+
+p_trips_valid_first_week <- ggplot(trip_validation_count_first_week, aes(x=reorder(participant, total_trips), y=total_trips, fill=city)) 
+p_trips_valid_first_week + geom_bar(stat = 'identity') + geom_point(aes(y=trips_no_valid)) +
+  geom_hline(yintercept = mean(trip_validation_count_first_week$total_trips), color="blue") +
+  theme(legend.position = "bottom", axis.text.x=element_blank())
+
+p_box_valid_first_week <- ggplot(trip_validation_count_first_week, aes(x=city, y=trips_valid))
+p_box_valid_first_week + geom_boxplot() 
+
+
 # 1 Why not valid? all participans had failures / during all the period of the experiment but more during first day
 # Mostly in MS and more problemátic, but distribuited during the campaign
-p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=city, y=trip_day_experiment, color=city))
-p_trips_no_valid + geom_point() + theme(legend.position = "bottom")
+p_trips_no_valid <- ggplot(trip_record[trip_record$validation == "No Valid",], aes(x=participant, fill=validation))
+p_trips_no_valid + geom_bar(stat = "count") + theme(legend.position = "bottom")
 # Percentage of validation
 
 round(trip_record$trip_start_experiment, digits = 0) + 1
@@ -67,17 +117,67 @@ p_trips + stat_count(stat = 'identity')
 p_trips + geom_point() + theme(legend.position = "bottom") + geom_smooth()
 
 # 4 all
-p_hist_all_trips <- ggplot(trip_record, aes(x=app_cycling))
-p_hist_all_trips + stat_count(stat = 'count') + facet_grid(validation ~ gender)
+p_hist_all_trips <- ggplot(trip_record, aes(x=city))
+p_hist_all_trips + stat_count(width = 0.8) + geom_label(stat="count", aes(label=..count..),vjust=2) + 
+  theme(legend.position = "bottom") + theme_bw() + facet_grid(. ~ feedback_function)
+   
 
+ceiling(trip_record$trip_day_experiment / 10)
 
 ggplot(trip_record, aes(x=cite())) + geom_bar(stat = "mean") +  geom_text(stat='count',aes(label=..count..))
-mean(trip_record[!is.na(trip_record$length_raw),]$length_raw)
+mean(trip_record[!is.na(trip_record$length_raw),]$length_raw) + facet_grid(trip_week_experiment ~ .)
 mean(trip_record[trip_record$validation != "No Valid" & trip_record$validation != "Valid Distance",]$trip_length)
 
 210/793
 380/793
 240/293
+
+29/(9+44+91)
+36/(13+42+59)
+
+343 + 335 + 115
+343/793
+335/793
+115/793
+
+173 + 150 + 78
+173 / (173 + 150 + 78)
+150 / (173 + 150 + 78)
+78 / (173 + 150 + 78)
+
+111 + 71 + 33
+111 / (111 + 71 + 33)
+71 / (111 + 71 + 33)
+31 / (111 + 71 + 33)
+
+32 + 29 + 4
+
+(111 + 71 + 33 + 173 + 150 + 78 + 65) / 793
+
+204/793
+34/793
+347/793
+208/793
+
+
+
+values <- data.frame(value = c("a", "a", "a", "a", "a", 
+                               "b", "b", "b", 
+                               "c", "c", "c", "c"))
+nr.of.appearances <- aggregate(x = values, 
+                               by = list(unique.values = values$value), 
+                               FUN = length)
+
+ag_participants <- aggregate(x = trip_record, by = list(trip_record$participant), FUN = length)
+
+
+tab %>%
+  group_by(month, variable) %>%
+  summarise(a_sum=sum(amount),
+            a_mean=(mean(amount)))
+
+
+
 
 
 

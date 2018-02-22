@@ -131,7 +131,7 @@ t.test(answers_satisfaction_competition_before[answers_satisfaction_competition_
 t.test(answers_satisfaction_competition_before[answers_satisfaction_competition_before$city=="Münster",]$satisfaction, 
        answers_satisfaction_competition_after[answers_satisfaction_competition_after$city=="Münster",]$satisfaction ) 
 
-t.test(answers_satisfaction_collaboration_before$satisfaction, answers_satisfaction_collaboration_after$satisfaction)
+t.test(satisfaction_collaboration_before$satisfaction, satisfaction_collaboration_after$satisfaction)
 t.test(answers_satisfaction_collaboration_before[answers_satisfaction_collaboration_before$city=="Castelló",]$satisfaction, 
        answers_satisfaction_collaboration_after[answers_satisfaction_collaboration_after$city=="Castelló",]$satisfaction)
 t.test(answers_satisfaction_collaboration_before[answers_satisfaction_collaboration_before$city=="Malta",]$satisfaction, 

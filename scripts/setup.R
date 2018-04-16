@@ -9,22 +9,31 @@
 # Setup
 
 table_participants = read.csv('data/Cyclist_Experiment.csv')
+
 table_trips = read.csv('data/Cyclist_Trip.csv', sep = '\t')
-# Participant 57 - 77d5ef0502ed6625_1 after 17/11/2017
-# Participant 56 - f10bdbbea0e46dd0_1 after 17/11/2017
+
+table_tags <- read.csv('data/Cyclist_Tag.csv', sep = '\t')
+table_tags_polarity <- read.csv('data/Tags_polarity.csv')
+tags_polarity <- merge(table_tags, table_tags_polarity, by = "text", all.x = TRUE)
+tags_polarity <- unique(tags_polarity)  # Remove duplicated rows due to tags equally spelled in different languages
+
 table_location = read.csv('data/Cyclist_Location.csv', sep = '\t')
 table_location$time_gps <-  strptime(table_location$time_gps, format= "%Y-%m-%dT%H:%M:%OS")
-#table_location[table_location$device == "f10bdbbea0e46dd0" & difftime(table_location$time_gps, strptime("2017-11-17T00:00:00.000Z", format = "%Y-%m-%dT%H:%M:%OS")) > 0,]$device <- "f10bdbbea0e46dd0_1"
-#table_location[table_location$device == "77d5ef0502ed6625" & difftime(table_location$time_gps, strptime("2017-11-17T00:00:00.000Z", format = "%Y-%m-%dT%H:%M:%OS")) > 0,]$device <- "77d5ef0502ed6625"
-
 table_trips_length = read.csv('data/Cyclist_Trip_length.csv')
+
 table_answers = read.csv('data/Questionnaire_Answers.csv')
 table_answers$group <- "none"
 table_answers[which(table_answers$competition_1 >= -3),]$group <- "Competition"
 table_answers[which(table_answers$collaboration_1 >= -3),]$group <- "Collaboration"
+
 trips_joined <- merge(table_trips, table_participants)
 trips_joined <- merge(trips_joined, table_trips_length, all.x = TRUE)
 trips_joined <- merge(trips_joined, table_answers)
+
+tags_joined <- merge(tags_polarity,table_participants, by = "device", all.x = TRUE)
+tags_joined <- tags_joined[which(!duplicated(tags_joined$X_created_at)),] # Remove duplicated rows due to the same device
+tags_joined <- merge(tags_joined, table_answers[,c("participant", "group")], all.x = TRUE)
+tags_joined$campaign_day = as.Date(tags_joined$X_created_at) - as.Date(tags_joined$questionnaire1) + 1
+
 location_joined <- merge(table_location, table_participants, all.y = TRUE)
 location_joined <- merge (location_joined, table_answers, all.x = TRUE)
-

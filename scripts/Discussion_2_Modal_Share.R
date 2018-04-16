@@ -5,17 +5,17 @@
 # Author: Diego Pajarito 
 
 
-# Setup 
-
 library(ggplot2)
-table_answers <- read.csv('data/Questionnaire_Answers.csv')
+
+# Setup 
+source("scripts/setup.R")
 mode_values <- c(1,2,3,4)
 mode_labels <- c("Bicycle", "Walking", "Pub. transport", "Private Car")
 mode_factors <- factor(mode_values)
 
 # Participants reporting mode of transportation 
 
-transport_city <- data.frame(table_answers$Participant, table_answers$City, table_answers$dem_transport_bicycle, table_answers$dem_transport_walk, 
+transport_city <- data.frame(table_answers$participant, table_answers$City, table_answers$dem_transport_bicycle, table_answers$dem_transport_walk, 
                        table_answers$dem_transport_public, table_answers$dem_transport_car)
 
 names(transport_city) <- c("participant", "city", "bicycle", "walking", "public_transport", "private_car")

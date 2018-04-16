@@ -51,6 +51,9 @@ trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30),
 trip_record[which(!is.na(trip_record$length_raw) & trip_record$length_raw > 30 & trip_record$trip_length >= 0.5 & trip_record$trip_length <= 300.0),]$validation <- "Valid"
 trip_record$avg_speed = trip_record$length_raw/(as.numeric(trip_record$trip_length) /60)
 
+p_trips_valid <- ggplot(trip_record, aes(validation))
+p_trips_valid + geom_bar(stat = 'count') + geom_label(stat = 'count', aes(label = ..count..))
+
 # Estimating the proportion of of valid trips per participant
 trip_validation_values <- data.frame(trip_record$participant, trip_record$city, trip_record$group, as.integer(trip_record$trip_week_experiment), trip_record$validation, trip_record$feedback_function, trip_record$feedback_reminder)
 names(trip_validation_values) <- c("participant", "city", "group", "week", "validation", "feedback_function", "feedback_reminder")

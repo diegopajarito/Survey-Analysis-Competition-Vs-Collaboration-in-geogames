@@ -37,3 +37,10 @@ tags_joined$campaign_day = as.Date(tags_joined$X_created_at) - as.Date(tags_join
 
 location_joined <- merge(table_location, table_participants, all.y = TRUE)
 location_joined <- merge (location_joined, table_answers, all.x = TRUE)
+
+# To Export aggregated data
+# Tags with polarity
+# write.csv2(tags_joined, 'data/full_tags.csv')
+# Questionnaire 
+# full_answers <- merge(table_answers, table_participants)
+# write.csv2(full_answers, 'data/full_answers.csv')

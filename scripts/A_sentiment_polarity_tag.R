@@ -91,7 +91,7 @@ wordcloud(words = d$word, freq = d$freq, min.freq = 1,
 
 # Plot for showing the amount of tags that each participant had provided 
 # during the experiment, 
-ggplot(table_tags_polarity_joined[!is.na(table_tags_polarity_joined$city),], aes(participant, tag_coung )) +
+ggplot(table_tags_polarity_joined[!is.na(table_tags_polarity_joined$city),], aes(participant, tag_count )) +
   geom_point(aes(colour = factor(sentiment_polarity))) +
   theme_bw() + 
   facet_grid(city ~ .) +

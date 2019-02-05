@@ -26,9 +26,17 @@ plot(rep(1,50),col=(colfunc(50)), pch=19,cex=2)
 # Bar chart showing the number of tags per city
 q_plot <- ggplot(tags_experiment, aes(campaign_day, fill=sentiment_polarity))
 q_plot + geom_bar(stat = 'bin') + xlim(0,20) +
-  scale_fill_manual(l_title, values = c("#f46d43", "#DCDCDC", "#66bd63")) +
+  scale_fill_manual(l_title, values = c("#ff0000", "#DCDCDC", "#66bd63")) +
   xlab(x_title) + ylab(y_title) + theme_bw() + theme(legend.position = 'bottom') +
   facet_grid(group ~ .)
+
+# Bar chart showing the number of tags per city
+q_plot <- ggplot(tags_experiment, aes(campaign_day, fill=sentiment_polarity))
+q_plot + geom_bar(stat = 'bin', position = 'fill') + xlim(0,20) +
+  scale_fill_manual(l_title, values = c("#ff0000", "#DCDCDC", "#66bd63")) +
+  xlab(x_title) + ylab(y_title) + theme_bw() + theme(legend.position = 'bottom', axis.text.y = element_blank()) +
+  facet_grid(group ~ .)
+
 
 # Tags recorded during the first two weeks by sentimen polarity and group
 count(tags_experiment[which( tags_experiment$campaign_day <= 13),], c('sentiment_polarity') )

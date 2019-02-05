@@ -52,6 +52,10 @@ plot(profile_infrastructure_likert, centered = TRUE) + ggtitle("") + theme(plot.
 plot(profile_infrastructure_likert, type = "density")
 plot(profile_infrastructure_likert)
 
+profile_infrastructure_likert <- likert(profile_infratructure_factors[,c(3:8)])
+plot(profile_infrastructure_likert) +
+  guides(fill=guide_legend(title=NULL, nrow = 1)) 
+
 profile_infrastructure_experiment_likert <- likert(profile_infratructure_factors[,c(3:8)], grouping = profile_infratructure_factors$satisfaction_experiment)
 plot(profile_infrastructure_experiment_likert, centered = TRUE) + ggtitle("") + theme(plot.title = element_text(hjust = 0.5)) + 
   guides(fill=guide_legend(title=NULL, nrow = 1)) 
